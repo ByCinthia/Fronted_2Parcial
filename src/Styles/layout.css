@@ -1,0 +1,53 @@
+:root{
+  /* colores: cremas, rosado y acento rojo */
+  --bg: linear-gradient(135deg, #faf7f4 0%, #f6f2ef 50%, #f0ebe6 100%);
+  --cream: #faf3ec;
+  --cream-2: #fff7f3;
+  --soft-pink: #f7dbe3;
+  --pink: #f4a7bf;
+  --pink-deep: #e07a98;
+  --red-accent: #d33b3b;
+  --line: rgba(90,63,52,0.06);
+  --text-dark: #5a3f34;
+  --muted: rgba(90,63,52,0.55);
+  --card: #ffffff;
+  --shadow-soft: 0 6px 18px rgba(90,63,52,0.04);
+  --page-padding: 24px;
+  --page-max-width: 1100px;
+  --page-bg: var(--bg);
+}
+
+/* override global root so no otro CSS lo recorta */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--page-bg);
+  width: 100%;
+}
+
+/* raíz de cada página: ocupa al menos la altura de la ventana */
+.page-root{
+  min-height: 100vh;
+  padding: var(--page-padding);
+  background: transparent; /* background ya en html/body */
+  box-sizing: border-box;
+  display: block;
+}
+
+/* contenedor central limitado y centrado */
+.page-container{
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* utilidad para centrar verticalmente cuando se necesite */
+.page-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - (var(--page-padding) * 2));
+}

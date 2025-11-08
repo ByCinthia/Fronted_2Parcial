@@ -1,0 +1,245 @@
+/* ...existing code... */
+
+:root{
+  --bg: linear-gradient(135deg, #faf9f6 0%, #f5f3f0 50%, #f0ede8 100%);
+  --card-bg: rgba(255,255,255,0.9);
+  --accent: #cfa94a;
+  --accent-dark: #8b6655;
+  --muted: rgba(43,43,43,0.6);
+  --card-border: rgba(0,0,0,0.04);
+}
+
+main {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', system-ui, sans-serif;
+  color: var(--accent-dark);
+}
+
+/* Cabecera */
+main > h2{
+  font-size: 1.9rem;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+main > p{
+  margin: 0 0 18px;
+  color: var(--muted);
+}
+
+/* Grid de productos (si viene inline, estas reglas complementan) */
+main > div {
+  margin-top: 16px;
+}
+
+/* Cards */
+main article {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  box-shadow: 0 12px 30px rgba(20,20,20,0.04);
+  display: flex;
+  flex-direction: column;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+main article:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 22px 46px rgba(20,20,20,0.07);
+}
+
+/* Imagen */ 
+main article img{
+  width: 100%;
+  height: 240px; /* era 24px - demasiado pequeño */ 
+  object-fit: cover;
+  display: block;
+}
+
+/* Contenido */
+main article > div{
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+main article h3{
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--accent-dark);
+}
+
+main article strong{
+  color: var(--accent-dark);
+}
+
+/* Row con precio + botón */
+main article div > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botón añadir */
+main article button {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+main article button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(143,96,41,0.18);
+}
+
+/* Lista vacía / mensaje centrado */
+.shop-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--muted);
+}
+
+/* Menú de categorías */
+.shop-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.cat-btn {
+  padding: 10px 16px;
+  border-radius: 25px;
+  border: 2px solid rgba(207,169,74,0.3);
+  background: transparent;
+  color: var(--accent-dark);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cat-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(207,169,74,0.6);
+  box-shadow: 0 4px 12px rgba(207,169,74,0.2);
+}
+
+.cat-btn.active {
+  background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+  color: #fff;
+  border-color: var(--gold);
+  box-shadow: 0 6px 20px rgba(207,169,74,0.3);
+}
+
+.cat-count {
+  font-size: 0.85em;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* Grid de productos */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.products-grid article {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.products-grid article:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.products-grid article img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.products-grid article > div {
+  padding: 16px;
+}
+
+.products-grid article h3 {
+  margin: 0 0 12px;
+  font-size: 1.1em;
+  color: var(--accent-dark);
+}
+
+.products-grid article > div > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.products-grid article strong {
+  color: var(--gold-deep);
+  font-size: 1.1em;
+}
+
+.products-grid article button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.products-grid article button:hover {
+  transform: scale(1.05);
+}
+
+/* Ajustes del grid en pantallas pequeñas */
+@media (max-width: 880px){
+  main article img { height: 180px; }
+}
+
+@media (max-width: 520px){
+  main {
+    padding: 18px;
+  }
+  main article {
+    border-radius: 12px;
+  }
+  main article img { height: 200px; }
+  main > h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .shop-categories {
+    gap: 8px;
+  }
+  
+  .cat-btn {
+    padding: 8px 12px;
+    font-size: 0.9em;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+}

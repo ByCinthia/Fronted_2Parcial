@@ -1,0 +1,22 @@
+.dashboard-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7f5f3;
+}
+
+.dashboard-body {
+  display: flex;
+  align-items: stretch;
+  min-height: calc(100vh - 64px);
+}
+
+.dashboard-content {
+  margin-top: 64px;    /* espacio para el topbar */
+  margin-left: 220px;  /* espacio para el sidebar */
+  padding: 28px;
+  min-height: calc(100vh - 64px);
+  box-sizing: border-box;
+  overflow: auto;
+  background: transparent;
+}
