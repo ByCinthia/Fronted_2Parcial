@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useCart } from "../../context/CartContext";
-import "./shop.css";
-import "../../styles/layout.css";
+import "../../Styles/shop.css";
+import "../../Styles/layout_base.css";
 
 // importa la imagen para que el bundler la procese
 import vestidoLila from "../../assets/vestido_lila.jpg";

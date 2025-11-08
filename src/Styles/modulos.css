@@ -1,0 +1,194 @@
+/* Estilos compartidos para módulos (Productos, Usuarios, Clientes, etc.) */
+
+/* Paleta y variables globales */
+:root{
+  --cream: #faf3ec;
+  --cream-2: #fff7f3;
+  --soft-pink: #f7dbe3;
+  --pink-deep: #e07a98;
+  --red-accent: #d33b3b;
+  --text-dark: #5a3f34;
+  --muted: rgba(90,63,52,0.55);
+  --line: rgba(90,63,52,0.06);
+  --card: #ffffff;
+  --shadow-soft: 0 8px 24px rgba(90,63,52,0.04);
+  --container-width: 1100px;
+  --gutter: 12px;
+}
+
+/* Contenedor base de cualquier módulo */
+.module-root,
+.prod-root, .users-root, .clients-root {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: calc(var(--gutter) + 4px);
+  box-sizing: border-box;
+}
+
+/* Cabecera del módulo (título + acciones) */
+.module-header,
+.prod-header, .users-header, .clients-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Contenedor de acciones reutilizable */
+.module-actions {
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+
+/* Botones compartidos */
+.btn-primary {
+  background: linear-gradient(90deg,#f0ceaa,#e0be9c);
+  color:#fff;
+  padding:8px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  box-shadow: var(--shadow-soft);
+}
+.btn-ghost {
+  background:transparent;
+  border:1px solid rgba(0,0,0,0.06);
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.btn-danger {
+  background: var(--red-accent);
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* Lista modular (cards o filas) */
+.module-list,
+.prod-list, .users-list, .clients-list {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+}
+
+/* Tarjeta genérica para items */
+.module-card,
+.prod-card, .user-card, .client-card {
+  background: var(--card);
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid rgba(0,0,0,0.04);
+  display:flex;
+  flex-direction:column;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.module-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+
+/* Imagen de tarjeta */
+.module-img,
+.prod-img, .user-img, .client-img {
+  height:180px;
+  background:var(--cream-2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.module-img img { width:100%; height:100%; object-fit:cover; }
+.module-placeholder, .placeholder { width:100%; height:100%; background:linear-gradient(90deg,var(--cream-2),var(--cream)); }
+
+/* Cuerpo de la tarjeta */
+.module-body,
+.prod-body, .user-body, .client-body {
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  flex:1;
+}
+.module-body h3 { margin:0; font-size:1.05rem; color:var(--text-dark); }
+.module-meta,
+.meta {
+  display:flex;
+  gap:8px;
+  color:var(--muted);
+  font-size:0.9rem;
+  flex-wrap:wrap;
+}
+.module-footer,
+.footer {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:auto;
+}
+
+/* Formularios genéricos */
+.module-form,
+.prod-form, .user-form, .client-form {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  background:var(--card);
+  padding:12px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.04);
+}
+.form-row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.module-form label,
+.prod-form label, .user-form label, .client-form label {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-weight:600;
+  color:var(--text-dark);
+  min-width: 180px;
+  flex: 1;
+}
+.module-form input, .module-form textarea, .module-form select,
+.prod-form input, .prod-form textarea, .prod-form select,
+.user-form input, .user-form select,
+.client-form input, .client-form select {
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(0,0,0,0.08);
+  background: transparent;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+  align-items:center;
+}
+
+/* Mensajes de error / aviso */
+.err, .form-error, .module-note {
+  color: var(--red-accent);
+  font-size: 0.95rem;
+}
+
+/* Helpers y utilidades */
+.text-muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
+
+/* Responsive */
+@media (max-width: 880px) {
+  .module-img, .prod-img { height:140px; }
+  .module-list { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .module-header { flex-direction: column; align-items:flex-start; gap:8px; }
+}
+@media (max-width:520px){
+  .module-img { height:120px; }
+  .module-root { padding:8px; }
+}

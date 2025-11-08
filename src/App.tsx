@@ -7,7 +7,11 @@ import Login from "./pages/Login/login";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardHome from "./pages/Dashboard/index";
 import './App.css';
-import './styles/layout.css'; // ← importa layout global aquí
+import './Styles/layout_base.css'; // <-- ruta corregida (usa la carpeta Styles)
+
+/* nuevas importaciones de productos */
+import ProductosAdmin from "./pages/Productos/productos";
+import ProductForm from "./pages/Productos/inventario";
 
 export default function App() {
   return (
@@ -20,7 +24,13 @@ export default function App() {
 
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
-            {/* Añade rutas hijas: /dashboard/products, /dashboard/orders, /dashboard/users */}
+
+            {/* Rutas del módulo Productos */}
+            <Route path="products" element={<ProductosAdmin />} />
+            <Route path="products/new" element={<ProductForm />} />
+            <Route path="products/:id" element={<ProductForm />} />
+
+            {/* Añade aquí otras rutas hijas: orders, users, clients, etc. */}
           </Route>
         </Routes>
       </BrowserRouter>
