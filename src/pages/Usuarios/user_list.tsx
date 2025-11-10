@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {  listUsers } from "../../services/api";
+import { listUsers } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type User = {
@@ -12,19 +12,46 @@ type User = {
   rol?: { nombre: string };
 };
 
+// helper type-safe para extraer status de errores devueltos por api
+function getErrorStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null) {
+    const maybe = err as Record<string, unknown>;
+    const s = maybe.status;
+    if (typeof s === "number") return s;
+  }
+  return undefined;
+}
+
 export default function UserList() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setError("Debes iniciar sesión.");
+      // opcional: navigate("/login");
+      return;
+    }
+
+    // cargar usuarios y manejar loading + errores tipados
     (async () => {
+      setLoading(true);
       try {
-        const data = await listUsers(); // GET /api/usuarios/
-        setUsers(Array.isArray(data) ? (data as User[]) : []);
-      } catch (err) {
-        console.error(err);
-        setError("No se pudo cargar la lista de usuarios.");
+        const data = await listUsers();
+        if (Array.isArray(data)) {
+          setUsers(data as User[]);
+        } else {
+          setUsers([]);
+        }
+      } catch (err: unknown) {
+        const status = getErrorStatus(err);
+        if (status === 401) {
+          setError("Sesión expirada. Por favor inicia sesión.");
+        } else {
+          setError("Error cargando usuarios.");
+        }
       } finally {
         setLoading(false);
       }

@@ -5,8 +5,8 @@
  * - Guarda tokens en localStorage: "auth_token" y "refresh_token".
  */
 
-// En dev usa proxy (ruta relativa) para evitar CORS. En producción usa la VITE_API_URL si está definida.
-const BASE = "http://localhost:8000";  // hardcoded para testing
+// Preferir VITE_API_URL; si no existe, usar rutas relativas para aprovechar el proxy de Vite en dev.
+const BASE = (import.meta.env.VITE_API_URL as string) || "";
 
 // helpers de tokens / tipos usados por el módulo
 
@@ -38,11 +38,69 @@ export function clearTokens() {
 }
 
 // cabecera con Authorization si hay token
-function getAuthHeaders() {
+function getAuthHeaders(): Record<string,string> {
   const token = localStorage.getItem("auth_token");
   const headers: Record<string,string> = { "Content-Type": "application/json", "Accept": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
   return headers;
+}
+
+export async function apiGet<T = unknown>(path: string) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}
+
+export async function apiPost<T = unknown>(path: string, body?: unknown) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  console.debug("[apiPost] POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}
+
+export async function apiPut<T = unknown>(path: string, body?: unknown) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}
+
+export async function apiPatch<T = unknown>(path: string, body?: unknown) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}
+
+export async function apiDelete<T = unknown>(path: string) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
 }
 
 /* ---------- Auth / endpoints específicos ---------- */
@@ -54,24 +112,38 @@ function getAuthHeaders() {
  * - Guarda access/refresh según la respuesta del backend
  */
 export async function loginUser(identifier: string, password: string) {
-  clearTokens(); // debe existir
+  const path = "/api/usuarios/login/";
+  const url = `${BASE.replace(/\/+$/, "")}${path}`;
 
-  const body = { username: identifier.trim(), email: identifier.trim(), password };
-  const res = await fetch(`${BASE}/api/usuarios/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw { status: res.status, data };
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ username: identifier, email: identifier, password }),
+    });
+  } catch (networkErr) {
+    console.error("[loginUser] network error:", networkErr);
+    throw { status: 0, data: "Network error or blocked by CORS" };
+  }
 
-  const access = data?.access ?? data?.tokens?.access ?? data?.token ?? null;
-  const refresh = data?.refresh ?? data?.tokens?.refresh ?? null;
-  if (access) setToken(String(access), refresh ? String(refresh) : null);
+  const ct = res.headers.get("content-type") || "";
+  const payload = ct.includes("application/json") ? await res.json().catch(() => null) : await res.text().catch(() => null);
 
-  // guardar usuario si backend lo devuelve
-  if (data?.usuario) localStorage.setItem("current_user", JSON.stringify(data.usuario));
-  return data;
+  if (!res.ok) throw { status: res.status, data: payload };
+
+  // guardar tokens y usuario
+  const access = payload?.access ?? payload?.tokens?.access ?? payload?.token ?? null;
+  const refresh = payload?.refresh ?? payload?.tokens?.refresh ?? null;
+  if (access) {
+    localStorage.setItem("auth_token", String(access));
+    if (refresh) localStorage.setItem("refresh_token", String(refresh));
+  }
+  if (payload?.usuario) {
+    localStorage.setItem("current_user", JSON.stringify(payload.usuario));
+  }
+
+  return payload;
 }
 
 /** refresh token: POST /api/token/refresh/ */
@@ -158,64 +230,4 @@ export async function deleteUserPermanent(id: number | string) {
 /* Buscar roles por query (si tu API tiene /roles/buscar/) */
 export async function searchRoles(q: string) {
   return apiGet(`/api/usuarios/roles/buscar/?q=${encodeURIComponent(q)}`);
-}
-
-/* implementaciones faltantes de HTTP helpers */
-export async function apiGet<T = unknown>(path: string) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  console.debug("[apiGet] GET", url, getAuthHeaders());
-  const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
-}
-
-export async function apiPost<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  console.debug("[apiPost] POST", url);
-  const res = await fetch(url, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
-}
-
-export async function apiPut<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
-}
-
-export async function apiPatch<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
-}
-
-export async function apiDelete<T = unknown>(path: string) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
 }

@@ -15,7 +15,7 @@ type Order = {
 export default function OrderForm() {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
-  const [order, setOrder] = useState<Order | null>(null); // <- tipo explícito
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,8 +27,8 @@ export default function OrderForm() {
 
     (async () => {
       try {
-        const data = await apiGet<Order>(`/pedidos/${id}`); // <- genérico
-        setOrder(data);
+        const data = await apiGet<Order>(`/pedidos/${id}`);
+        setOrder(data ?? null);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar el pedido.");
@@ -50,13 +50,44 @@ export default function OrderForm() {
       {id ? (
         <div className="module-form">
           <h3>Detalles del pedido</h3>
-          <p><strong>Cliente:</strong> {order?.cliente?.nombre}</p>
-          <p><strong>Email:</strong> {order?.cliente?.email}</p>
-          <p><strong>Total:</strong> ${(Number(order?.total ?? 0)).toFixed(2)}</p>
-          <p><strong>Estado:</strong> {order?.estado}</p>
-          <p><strong>Fecha:</strong> {order?.fecha_creacion}</p>
-          
-          <div className="form-actions">
+
+          <div style={{ marginBottom: 12 }}>
+            <p><strong>Cliente:</strong> {order?.cliente?.nombre}</p>
+            <p><strong>Email:</strong> {order?.cliente?.email}</p>
+            <p><strong>Total:</strong> ${(Number(order?.total ?? 0)).toFixed(2)}</p>
+            <p><strong>Estado:</strong> {order?.estado}</p>
+            <p><strong>Fecha:</strong> {order?.fecha_creacion}</p>
+          </div>
+
+          <div>
+            <strong>Artículos:</strong>
+            {order?.items && order.items.length > 0 ? (
+              <table style={{ width: "100%", marginTop: 8, borderCollapse: "collapse" }}>
+                <thead style={{ textAlign: "left", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                  <tr>
+                    <th style={{ padding: "6px 8px" }}>Producto</th>
+                    <th style={{ padding: "6px 8px" }}>Cantidad</th>
+                    <th style={{ padding: "6px 8px" }}>Precio</th>
+                    <th style={{ padding: "6px 8px" }}>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((it, i) => (
+                    <tr key={it.producto ?? i} style={{ borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <td style={{ padding: "8px" }}>{it.producto}</td>
+                      <td style={{ padding: "8px" }}>{it.cantidad ?? 1}</td>
+                      <td style={{ padding: "8px" }}>${(Number(it.precio ?? 0)).toFixed(2)}</td>
+                      <td style={{ padding: "8px" }}>${(Number(it.precio ?? 0) * (it.cantidad ?? 1)).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p style={{ color: "var(--muted)" }}>No hay artículos registrados para este pedido.</p>
+            )}
+          </div>
+
+          <div className="form-actions" style={{ marginTop: 18 }}>
             <button className="btn-ghost" onClick={() => navigate(-1)}>Volver</button>
           </div>
         </div>

@@ -42,8 +42,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const add = (p: Product) => {
     setItems((prev) => {
       const found = prev.find((x) => x.id === p.id);
-      if (found) return prev.map((x) => (x.id === p.id ? { ...x, qty: (x.qty || 1) + 1 } : x));
-      return [...prev, { ...p, qty: 1 }];
+      const addQty = p.qty && p.qty > 0 ? p.qty : 1;
+      if (found) {
+        return prev.map((x) =>
+          x.id === p.id ? { ...x, qty: (x.qty || 0) + addQty } : x
+        );
+      }
+      return [...prev, { ...p, qty: addQty }];
     });
   };
 
