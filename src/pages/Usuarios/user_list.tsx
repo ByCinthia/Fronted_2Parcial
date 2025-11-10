@@ -1,15 +1,26 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {  listUsers } from "../../services/api";
+import { listUsers } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type User = {
   id?: number;
+  idUsuario?: number;
   username?: string;
   email?: string;
   idRol?: number;
   rol?: { nombre: string };
 };
+
+// helper type-safe para extraer status de errores devueltos por api
+function getErrorStatus(err: unknown): number | undefined {
+  if (typeof err === "object" && err !== null) {
+    const maybe = err as Record<string, unknown>;
+    const s = maybe.status;
+    if (typeof s === "number") return s;
+  }
+  return undefined;
+}
 
 export default function UserList() {
   const [users, setUsers] = useState<User[]>([]);
@@ -17,13 +28,30 @@ export default function UserList() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setError("Debes iniciar sesión.");
+      // opcional: navigate("/login");
+      return;
+    }
+
+    // cargar usuarios y manejar loading + errores tipados
     (async () => {
+      setLoading(true);
       try {
-        const data = await listUsers(); // GET /api/usuarios/
-        setUsers(Array.isArray(data) ? (data as User[]) : []);
-      } catch (err) {
-        console.error(err);
-        setError("No se pudo cargar la lista de usuarios.");
+        const data = await listUsers();
+        if (Array.isArray(data)) {
+          setUsers(data as User[]);
+        } else {
+          setUsers([]);
+        }
+      } catch (err: unknown) {
+        const status = getErrorStatus(err);
+        if (status === 401) {
+          setError("Sesión expirada. Por favor inicia sesión.");
+        } else {
+          setError("Error cargando usuarios.");
+        }
       } finally {
         setLoading(false);
       }
@@ -42,7 +70,7 @@ export default function UserList() {
       {loading ? <p>Cargando…</p> : error ? <p className="err">{error}</p> : (
         <div className="module-list">
           {users.map(u => (
-            <article key={u.id} className="module-card">
+            <article key={u.id ?? u.idUsuario ?? u.username} className="module-card">
               <div className="module-body">
                 <h3>{u.username}</h3>
                 <div className="module-meta">

@@ -5,6 +5,7 @@ import Shop from "./pages/Shop/shop";
 import Login from "./pages/Login/login";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardHome from "./pages/Dashboard/index";
+import CartPage from "./pages/Cart/cart";
 
 /* Módulos del dashboard */
 import ProductosAdmin from "./pages/Productos/productos";
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/shop" element={<Shop />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegistroCliente />} />
+          <Route path="/cart" element={<CartPage />} />
 
           {/* Panel administrativo */}
           <Route path="/dashboard" element={<DashboardLayout />}>
@@ -66,6 +68,7 @@ export default function App() {
 
             {/* Pedidos */}
             <Route path="orders" element={<OrderList />} />
+            <Route path="orders/completed" element={<OrderList />} />
             <Route path="orders/new" element={<OrderForm />} />
             <Route path="orders/:id" element={<OrderForm />} />
           </Route>
