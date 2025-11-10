@@ -1,194 +1,353 @@
-/* Estilos compartidos para módulos (Productos, Usuarios, Clientes, etc.) */
+/* Estilos compartidos para módulos - FLEXIBLES */
 
-/* Paleta y variables globales */
+/* Variables globales */
 :root{
   --cream: #faf3ec;
   --cream-2: #fff7f3;
   --soft-pink: #f7dbe3;
   --pink-deep: #e07a98;
   --red-accent: #d33b3b;
-  --text-dark: #5a3f34;
-  --muted: rgba(90,63,52,0.55);
+  --blue-light: #e8f6ff;
+  --blue: #6fb8ff;
+  --blue-deep: #2b88d8;
+  --pearl: #f5f3f2;
+  --text-dark: #2e2a28;
+  --muted: rgba(46,42,40,0.55);
   --line: rgba(90,63,52,0.06);
   --card: #ffffff;
   --shadow-soft: 0 8px 24px rgba(90,63,52,0.04);
-  --container-width: 1100px;
-  --gutter: 12px;
+  --input-bg: #fbfaf9;
+  --input-border: rgba(46,42,40,0.09);
+  --header-bg: linear-gradient(135deg, #f8f6f4 0%, #e8f6ff 100%);
+  --module-bg: rgba(255,255,255,0.85);
 }
 
-/* Contenedor base de cualquier módulo */
-.module-root,
-.prod-root, .users-root, .clients-root {
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: calc(var(--gutter) + 4px);
+/* MÓDULO BASE - OCUPA TODO EL ANCHO DISPONIBLE */
+.module-root {
+  background: transparent;        /* wrapper transparente, no crea franja */
+  backdrop-filter: none;          /* no forzar blur en el wrapper */
+  border: 0;                      /* sin borde que genere línea */
+  overflow: visible;
+  box-shadow: none;
   box-sizing: border-box;
+  min-height: auto;               /* NO 100vh aquí */
+  margin: 0;
+  padding: 0;                     /* el padding se maneja dentro de module-header / module-list */
 }
 
-/* Cabecera del módulo (título + acciones) */
-.module-header,
-.prod-header, .users-header, .clients-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap: 12px;
-  margin-bottom: 14px;
+/* Header con fondo glassmorphism que ocupa todo el ancho */
+.module-header {
+  background: var(--header-bg);
+  padding: 28px 40px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 80px;
 }
 
-/* Contenedor de acciones reutilizable */
+/* Efecto glassmorphism para el header */
+.module-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255,255,255,0.4) 0%, 
+    rgba(111,184,255,0.15) 50%, 
+    rgba(255,255,255,0.3) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.module-header > * {
+  position: relative;
+  z-index: 2;
+}
+
+.module-header h1,
+.module-header h2 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+}
+
+/* Acciones del header */
 .module-actions {
-  display:flex;
-  gap: 8px;
-  align-items:center;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-/* Botones compartidos */
-.btn-primary {
-  background: linear-gradient(90deg,#f0ceaa,#e0be9c);
-  color:#fff;
-  padding:8px 12px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-  font-weight:700;
-  box-shadow: var(--shadow-soft);
-}
-.btn-ghost {
-  background:transparent;
-  border:1px solid rgba(0,0,0,0.06);
-  padding:6px 10px;
-  border-radius:8px;
-  cursor:pointer;
-}
-.btn-danger {
-  background: var(--red-accent);
-  color:#fff;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  cursor:pointer;
+/* LISTA QUE USA TODO EL ANCHO DISPONIBLE */
+.module-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 32px;
+  padding: 40px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: calc(100vh - 120px); /* ocupa el resto de la altura */
 }
 
-/* Lista modular (cards o filas) */
-.module-list,
-.prod-list, .users-list, .clients-list {
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap:16px;
-}
-
-/* Tarjeta genérica para items */
-.module-card,
-.prod-card, .user-card, .client-card {
+/* Cards que ocupan su espacio completo */
+.module-card {
   background: var(--card);
-  border-radius:10px;
-  overflow:hidden;
-  border:1px solid rgba(0,0,0,0.04);
-  display:flex;
-  flex-direction:column;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.module-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
-
-/* Imagen de tarjeta */
-.module-img,
-.prod-img, .user-img, .client-img {
-  height:180px;
-  background:var(--cream-2);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.module-img img { width:100%; height:100%; object-fit:cover; }
-.module-placeholder, .placeholder { width:100%; height:100%; background:linear-gradient(90deg,var(--cream-2),var(--cream)); }
-
-/* Cuerpo de la tarjeta */
-.module-body,
-.prod-body, .user-body, .client-body {
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  flex:1;
-}
-.module-body h3 { margin:0; font-size:1.05rem; color:var(--text-dark); }
-.module-meta,
-.meta {
-  display:flex;
-  gap:8px;
-  color:var(--muted);
-  font-size:0.9rem;
-  flex-wrap:wrap;
-}
-.module-footer,
-.footer {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:auto;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.24s ease;
+  padding: 20px;
+  min-height: 180px;
 }
 
-/* Formularios genéricos */
-.module-form,
-.prod-form, .user-form, .client-form {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background:var(--card);
-  padding:12px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,0.04);
+.module-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 24px 48px rgba(46,42,40,0.15);
+  border-color: var(--blue-light);
 }
+
+.module-body {
+  padding: 28px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,246,244,0.6));
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.module-body h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.module-meta {
+  display: flex;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+.module-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+/* BOTONES MEJORADOS */
+.btn-primary {
+  background: linear-gradient(90deg, var(--blue), var(--pink-deep));
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 16px 32px rgba(111,184,255,0.3);
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  background: var(--blue-light);
+  border-color: var(--blue);
+  transform: translateY(-2px);
+  color: var(--blue-deep);
+}
+
+/* FORMULARIOS QUE OCUPAN TODO EL ANCHO */
+.module-form {
+  background: var(--card);
+  border-radius: 0; /* sin bordes para ocupar más */
+  padding: 40px;
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  min-height: calc(100vh - 120px);
+  backdrop-filter: blur(8px);
+}
+
 .form-row {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.module-form label,
-.prod-form label, .user-form label, .client-form label {
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-weight:600;
-  color:var(--text-dark);
-  min-width: 180px;
-  flex: 1;
-}
-.module-form input, .module-form textarea, .module-form select,
-.prod-form input, .prod-form textarea, .prod-form select,
-.user-form input, .user-form select,
-.client-form input, .client-form select {
-  padding:8px;
-  border-radius:8px;
-  border:1px solid rgba(0,0,0,0.08);
-  background: transparent;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  margin-bottom: 32px;
 }
 
-/* Acciones del formulario */
+.module-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 1rem;
+}
+
+.module-form input,
+.module-form textarea,
+.module-form select {
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-dark);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.module-form input:focus,
+.module-form textarea:focus,
+.module-form select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(111,184,255,0.1);
+  transform: scale(1.02);
+}
+
 .form-actions {
-  display:flex;
-  gap:10px;
-  margin-top:8px;
-  align-items:center;
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
 }
 
-/* Mensajes de error / aviso */
-.err, .form-error, .module-note {
-  color: var(--red-accent);
-  font-size: 0.95rem;
+/* Estados vacíos que ocupan todo el espacio */
+.list-empty {
+  padding: 100px 40px;
+  text-align: center;
+  background: var(--cream-2);
+  border: 2px dashed var(--line);
+  color: var(--muted);
+  margin: 40px;
+  border-radius: 20px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-/* Helpers y utilidades */
+/* Utilidades */
 .text-muted { color: var(--muted); }
 .small { font-size: 0.9rem; }
+.kv { color: var(--muted); font-size: 1rem; font-weight: 500; }
 
-/* Responsive */
-@media (max-width: 880px) {
-  .module-img, .prod-img { height:140px; }
-  .module-list { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-  .module-header { flex-direction: column; align-items:flex-start; gap:8px; }
+/* Responsive completo */
+@media (max-width: 1400px) {
+  .module-list {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+    padding: 32px;
+  }
 }
-@media (max-width:520px){
-  .module-img { height:120px; }
-  .module-root { padding:8px; }
+
+@media (max-width: 1024px) {
+  .module-list {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 28px;
+  }
+  
+  .module-header {
+    padding: 24px 32px;
+  }
+  
+  .module-header h1,
+  .module-header h2 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .module-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 24px;
+  }
+  
+  .module-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 20px 24px;
+  }
+  
+  .module-header h1,
+  .module-header h2 {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .module-form {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .module-card {
+    min-height: 180px;
+  }
+  
+  .module-body {
+    padding: 24px;
+  }
+  
+  .module-header {
+    padding: 20px;
+  }
+  
+  .module-header h1,
+  .module-header h2 {
+    font-size: 1.4rem;
+  }
 }

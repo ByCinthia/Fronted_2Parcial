@@ -1,22 +1,329 @@
+/* -------- Inicio reemplazo limpio (quita :root local y duplicados) -------- */
+html, body, #root, main, .dashboard-root, .dashboard-main {
+  width: 100%;
+  max-width: 100% !important;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* No redefinir --sidebar-width aquí: usa la variable global de layout_base.css */
 .dashboard-root {
+  padding-top: var(--topbar-height);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f7f5f3;
-}
-
-.dashboard-body {
-  display: flex;
-  align-items: stretch;
-  min-height: calc(100vh - 64px);
-}
-
-.dashboard-content {
-  margin-top: 64px;    /* espacio para el topbar */
-  margin-left: 220px;  /* espacio para el sidebar */
-  padding: 28px;
-  min-height: calc(100vh - 64px);
+  background: transparent; /* dejamos el fondo controlado globalmente */
   box-sizing: border-box;
-  overflow: auto;
-  background: transparent;
 }
+
+/* Main: pegado al final del sidebar; sin padding que cree franja */
+.dashboard-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: calc(100vh - var(--topbar-height));
+  padding: 0; /* el gutter lo maneja .module-list */
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* espacio visual entre topbar y el header del módulo (titulo) */
+.dashboard-main > .module-root {
+  padding-top: 12px; /* espacio arriba del primer módulo */
+}
+/* -------- Fin reemplazo limpio -------- */
+
+/* El grid ocupa todo el ancho; el espacio interior lo controlan gap + padding pequeño */
+.dashboard-main .module-list {
+  padding: 20px 24px; /* gutter interno — ajusta según gusto */
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Las tarjetas controlan su propio padding (espacio interno) */
+.dashboard-main .module-card {
+  padding: 22px !important;
+  margin: 0 !important;
+}
+
+/* anular wrappers que limitan ancho o pintan fondo blanco */
+.dashboard-main .content,
+.dashboard-main .main-content,
+.dashboard-main .page-container,
+.dashboard-main .container {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* el módulo principal ocupa todo el ancho del main y controla su propio padding */
+.dashboard-main > .module-root,
+.dashboard-main .module-root {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important; /* si quieres sombra en cada card, ajusta .module-card */
+  border-radius: 0 !important;
+}
+
+/* dejar el espacio interior a las listas/cards (controlado por module-list/module-card) */
+.dashboard-main .module-list {
+  padding: var(--dashboard-padding, 24px) !important;
+}
+
+/* tarjetas internas: sombra tenue, sin crear franja alrededor */
+.dashboard-main .module-card {
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06) !important;
+  border: 1px solid rgba(0,0,0,0.03) !important;
+}
+
+/* Forzar que los módulos usen todo el ancho dentro del main */
+.dashboard-main > * {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 0 24px 0;
+  box-sizing: border-box;
+}
+
+/* Módulos: header con fondo tipo topbar (solo el header) */
+.module-root {
+  width: 100%;
+  background: transparent; /* el contenido controla su fondo */
+  color: inherit;
+  box-sizing: border-box;
+  border-radius: 0.8rem;
+}
+
+.module-header {
+  background: linear-gradient(90deg, #e8f6ff, #fdf0f8);
+  color: #0b1220;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.module-body {
+  padding: 2rem;
+}
+
+/* Grid flexible que llena todo el ancho disponible */
+.module-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 30%, 400px), 1fr));
+  gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Cards internas */
+.module-card {
+  background: rgba(255,255,255,0.03);
+  border-radius: 0.8rem;
+  padding: 1.4rem;
+  box-shadow: 0 0.6rem 1.8rem rgba(2,6,23,0.5);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Scroll y responsive mínimos (no tocan topbar/sidebar) */
+.dashboard-main::-webkit-scrollbar { width: 0.5rem; }
+.dashboard-main::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 0.4rem; }
+
+/* Anulaciones dentro del dashboard: evitar wrapper centrado que limita ancho */
+.dashboard-main .content,
+.dashboard-main .main-content,
+.dashboard-main .page-container,
+.dashboard-main .container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important; /* si quieres mantener padding, ajusta aquí */
+  background: transparent !important; /* evita fondo blanco */
+  box-shadow: none !important;
+}
+
+/* Forzar que los módulos ocupen todo el ancho del main */
+.dashboard-main > .module-root,
+.dashboard-main .module-root {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 24px 0;
+}
+
+/* Si algún layout global aplica padding al body interno, opcionalmente normalizar */
+.dashboard-main *[class*="wrap"],
+.dashboard-main *[class*="inner"] {
+  max-width: none !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-main { margin-left: 18vw; padding: 1.5rem; }
+}
+@media (max-width: 680px) {
+  .dashboard-main { margin-left: 0; width: 100%; padding: 1rem; }
+}
+
+/* Anulaciones finales para quitar gutters/bordes indeseados dentro del dashboard */
+.dashboard-main {
+  /* Main pegado al final del sidebar, sin padding que cree franja */
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Eliminar cualquier wrapper centrador o tarjeta blanca que limite ancho */
+.dashboard-main .content,
+.dashboard-main .main-content,
+.dashboard-main .page-container,
+.dashboard-main .container,
+.dashboard-main .page-wrapper,
+.dashboard-main .page-inner,
+.dashboard-main .ui-card,
+.dashboard-main .card {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* El módulo principal controla su propio padding interno */
+.dashboard-main > .module-root,
+.dashboard-main .module-root {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+/* El grid usa gutter interno (no el contenedor) */
+.dashboard-main .module-list {
+  width: 100%;
+  padding: 20px 28px; /* gutter interno manejado aquí */
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* Cada card conserva su padding y sombra, sin generar franja externa */
+.dashboard-main .module-card,
+.dashboard-main .ui-card {
+  margin: 0;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.98); /* ajusta si quieres más transparencia */
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Forzar eliminación de bordes verticales fuertes a la derecha del sidebar */
+.sidebar-root {
+  border-right: 1px solid rgba(0,0,0,0.03); /* suave o 'none' si prefieres */
+}
+
+/* Si aún ves margen, fuerza inspección: anula clases 'wrap' o 'inner' internas */
+.dashboard-main *[class*="wrap"],
+.dashboard-main *[class*="inner"] {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* FIX final: módulo inicial pegado al borde del main (quita franja izquierda) */
+.dashboard-main {
+  /* usar la variable del layout base; asegúrate de no redefinir --sidebar-width en este fichero */
+  margin-left: var(--sidebar-width) !important;
+  width: calc(100% - var(--sidebar-width)) !important;
+  padding-left: 0 !important;   /* main pegado al borde del sidebar */
+  padding-right: 0 !important;
+  background: transparent !important;
+}
+
+/* Primer módulo (y en general todos) sin margen/padding externo que cree franja */
+.dashboard-main > .module-root,
+.dashboard-main > *:first-child {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  background: transparent !important;
+  box-shadow: none !important; /* evita sombras que muestren franja */
+  border-left: none !important;
+  border-radius: 0 !important;
+}
+
+/* El header del módulo ocupa todo el ancho y no introduce separación */
+.dashboard-main .module-header {
+  width: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Controlar el gutter con la grid interna, no con padding del main */
+.dashboard-main .module-list {
+  padding: 20px 24px !important; /* ajuste interno, mantiene separación entre cards */
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* Si aún existe una clase wrapper concreta que crea la franja,
+   fuerza su anulación. Inspecciona con DevTools y añade aquí la clase si aparece. */
+
+/* Asegurar topbar fijo y empujar contenido */
+:root { /* si no existe, revisa layout_base.css */ --topbar-height: 64px; }
+
+/* Forzar topbar visible encima */
+.topbar-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-height);
+  z-index: 1000;
+}
+
+/* aseguramos que el dashboard se empuje por debajo del topbar (usa la variable global) */
+.dashboard-root {
+  padding-top: var(--topbar-height);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* main permanece igual, sin padding que cree franja */
+.dashboard-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: calc(100vh - var(--topbar-height));
+  padding: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* espacio visual entre topbar y el header del módulo (titulo) */
+.dashboard-main > .module-root {
+  padding-top: 12px; /* espacio arriba del primer módulo */
+}
+
+/* Si el h1 tiene padding/margen extra lo normalizamos */
+.dashboard-main .module-header h1,
+.dashboard-main .module-header h2 {
+  margin: 0;
+  padding: 0.4rem 0; /* ajusta si quieres más espacio debajo del topbar */
+}
+

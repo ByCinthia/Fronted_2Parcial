@@ -8,12 +8,10 @@ export default function DashboardLayout() {
   return (
     <div className="dashboard-root">
       <Topbar />
-      <div className="dashboard-body">
-        <Sidebar />
-        <main className="dashboard-content">
-          <Outlet />
-        </main>
-      </div>
+      <Sidebar />
+      <main className="dashboard-main">
+        <Outlet />
+      </main>
     </div>
   );
 }

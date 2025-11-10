@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useCart } from "../../context/CartContext";
+import { Link } from "react-router-dom";
 import "../../Styles/shop.css";
 import "../../Styles/layout_base.css";
 
@@ -38,6 +39,10 @@ export default function Shop() {
       <div className="page-container">
         <h2>Catálogo — Éclat Studio</h2>
         <p>Productos disponibles públicamente. Inicia sesión solo si eres personal.</p>
+
+        <div style={{ marginTop: 12 }}>
+          <Link to="/register" className="btn-primary">Crear cuenta</Link>
+        </div>
 
         {/* Menú de categorías */}
         <nav className="shop-categories" aria-label="Categorías de productos">

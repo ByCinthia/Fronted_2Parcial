@@ -3,7 +3,7 @@ header.topbar-root {
   top: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  height: var(--topbar-height); /* usar variable */
   display: flex;
   align-items: center;
   justify-content: space-between;
