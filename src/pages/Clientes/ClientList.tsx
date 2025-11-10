@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { apiGet } from "../../services/api";
+import { listUsers } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type Client = {
   id?: number;
   nombre?: string;
   email?: string;
+  telefono?: string;
+  rolNombre?: string;
+};
+
+type BackendUser = {
+  idUsuario?: number;
+  username?: string;
+  email?: string;
+  telefono?: string;
+  rol?: { idRol?: number; nombre?: string };
 };
 
 export default function ClientList() {
@@ -17,8 +27,19 @@ export default function ClientList() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await apiGet<Client[]>("/clientes");
-        setClients(Array.isArray(data) ? data : []);
+        const data = await listUsers(); // usa helper listUsers -> GET /api/usuarios/
+        const users = (data as BackendUser[]) || [];
+        setClients(
+          Array.isArray(users)
+            ? users.map(u => ({
+                id: u.idUsuario,
+                nombre: u.username,
+                email: u.email,
+                telefono: u.telefono,
+                rolNombre: u.rol?.nombre,
+              }))
+            : []
+        );
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la lista de clientes.");

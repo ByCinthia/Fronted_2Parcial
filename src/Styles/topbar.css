@@ -3,23 +3,20 @@ header.topbar-root {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--topbar-height); /* usar variable */
+  height: var(--topbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  background: var(--card);               /* mismo fondo que sidebar */
-  border-bottom: 1px solid var(--line); /* línea horizontal continua */
+  background: #ffffff;
+  border-bottom: 1px solid #d4af37; /* línea dorada simple */
   z-index: 60;
-  box-shadow: none;
+  box-shadow: none; /* quitar sombra brillante */
 }
 
 /* marca / link izquierdo */
 .topbar-brand {
-  color: var(--pink-deep);
-  font-weight: 700;
-  text-decoration: none;
-  padding-left: 8px;
+  display: none !important;
 }
 
 /* contenedor acciones (derecha) */
@@ -40,23 +37,24 @@ header.topbar-root {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1px solid transparent;
-  background: linear-gradient(180deg, var(--cream-2), var(--cream));
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border: 1px solid rgba(212,175,55,0.4); /* borde dorado */
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: var(--text-dark);
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  color: #e91e63;
+  transition: border-color .12s ease, background .12s ease;
 }
 
 .topbar-qa .qa-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-soft);
-  border-color: rgba(224,190,156,0.18);
+  transform: none; /* quitar elevación */
+  box-shadow: none; /* quitar brillo */
+  border-color: #d4af37; /* dorado marcado */
+  background: #fce4ec;
 }
 
-/* notificación con acento rojo */
+/* notificación con acento rosa */
 .topbar-qa .qa-btn.notify {
   position: relative;
 }
@@ -68,16 +66,20 @@ header.topbar-root {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--red-accent);
-  box-shadow: 0 0 0 3px rgba(211,59,59,0.12);
+  background: #e91e63;
+  box-shadow: none; /* quitar halo brillante */
 }
 
 /* links del topbar */
 .topbar-nav a {
-  color: var(--muted);
+  color: rgba(46,42,40,0.7);
   text-decoration: none;
   font-weight: 600;
   padding: 8px 10px;
   border-radius: 8px;
+  transition: all .16s ease;
 }
-.topbar-nav a:hover { color: var(--pink-deep); background: var(--cream-2); }
+.topbar-nav a:hover { 
+  color: #e91e63; 
+  background: #fce4ec; 
+}

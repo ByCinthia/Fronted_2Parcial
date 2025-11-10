@@ -14,6 +14,7 @@ import ClientList from "./pages/Clientes/ClientList";
 import ClientForm from "./pages/Clientes/ClientForm";
 import UserList from "./pages/Usuarios/user_list";
 import UserForm from "./pages/Usuarios/user_form";
+import RolesPage from "./pages/Roles/roles";
 import OrderList from "./pages/Pedidos/OrderList";
 import OrderForm from "./pages/Pedidos/OrderForm";
 
@@ -50,6 +51,9 @@ export default function App() {
             <Route path="users" element={<UserList />} />
             <Route path="users/new" element={<UserForm />} />
             <Route path="users/:id" element={<UserForm />} />
+
+            {/* Roles (nueva ruta) */}
+            <Route path="roles" element={<RolesPage />} />
 
             {/* Pedidos */}
             <Route path="orders" element={<OrderList />} />

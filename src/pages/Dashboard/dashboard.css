@@ -102,17 +102,53 @@ html, body, #root, main, .dashboard-root, .dashboard-main {
   border-radius: 0.8rem;
 }
 
+/* Header con línea dorada */
 .module-header {
-  background: linear-gradient(90deg, #e8f6ff, #fdf0f8);
-  color: #0b1220;
+  background: linear-gradient(90deg, var(--dashboard-white), var(--dashboard-pink));
+  color: var(--dashboard-black);
   padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--dashboard-gold); /* línea dorada */
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.module-body {
-  padding: 2rem;
+/* Cards con fondo crema y borde dorado */
+.module-card {
+  background: var(--dashboard-cream);
+  border: 1px solid var(--dashboard-gold);
+  box-shadow: 0 4px 12px rgba(97,12,39,0.06);
+  border-radius: 12px;
+  color: var(--dashboard-black);
+}
+
+.module-card:hover {
+  background: var(--dashboard-white);
+  border-color: var(--dashboard-wine);
+  transform: translateY(-2px);
+}
+
+/* Botones con nueva paleta */
+.btn-primary {
+  background: linear-gradient(90deg, var(--dashboard-wine), var(--dashboard-beige));
+  color: var(--dashboard-white);
+  border: 1px solid var(--dashboard-gold);
+}
+
+.btn-ghost {
+  background: var(--dashboard-white);
+  border: 1px solid var(--dashboard-beige);
+  color: var(--dashboard-wine);
+}
+
+.btn-ghost:hover {
+  background: var(--dashboard-pink);
+  border-color: var(--dashboard-wine);
+}
+
+/* Sidebar con línea dorada simple */
+.sidebar-root {
+  border-right: 1px solid #d4af37; /* línea dorada simple */
 }
 
 /* Grid flexible que llena todo el ancho disponible */
@@ -122,15 +158,6 @@ html, body, #root, main, .dashboard-root, .dashboard-main {
   gap: 2rem;
   width: 100%;
   box-sizing: border-box;
-}
-
-/* Cards internas */
-.module-card {
-  background: rgba(255,255,255,0.03);
-  border-radius: 0.8rem;
-  padding: 1.4rem;
-  box-shadow: 0 0.6rem 1.8rem rgba(2,6,23,0.5);
-  border: 1px solid rgba(255,255,255,0.03);
 }
 
 /* Scroll y responsive mínimos (no tocan topbar/sidebar) */
@@ -325,5 +352,16 @@ html, body, #root, main, .dashboard-root, .dashboard-main {
 .dashboard-main .module-header h2 {
   margin: 0;
   padding: 0.4rem 0; /* ajusta si quieres más espacio debajo del topbar */
+}
+
+/* Variables actualizadas con la nueva paleta */
+:root {
+  --dashboard-black: #050505;      /* negro profundo */
+  --dashboard-wine: #610C27;       /* vino/burgundy */
+  --dashboard-beige: #AC9C8D;      /* beige */
+  --dashboard-pink: #E3C1B4;       /* rosa claro */
+  --dashboard-cream: #DDD9CE;      /* crema */
+  --dashboard-white: #FFFCE9;      /* blanco cálido */
+  --dashboard-gold: #d4af37;       /* dorado conservado para bordes */
 }
 

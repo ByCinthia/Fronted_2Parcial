@@ -1,42 +1,221 @@
-// Cliente API genérico y tipado
-export type ApiError = { status?: number; data?: unknown; message?: string };
+/**
+ * Cliente HTTP ligero con refresco automático de token.
+ * - Usa import.meta.env.VITE_API_URL como base.
+ * - Provee helpers apiGet/apiPost/... y endpoints de usuarios/roles.
+ * - Guarda tokens en localStorage: "auth_token" y "refresh_token".
+ */
 
-const BASE = import.meta.env.VITE_API_URL ?? "";
+// En dev usa proxy (ruta relativa) para evitar CORS. En producción usa la VITE_API_URL si está definida.
+const BASE = "http://localhost:8000";  // hardcoded para testing
 
-let _token: string | null = localStorage.getItem("auth_token");
+// helpers de tokens / tipos usados por el módulo
 
-export function setToken(token: string | null) {
-  _token = token;
-  if (token) localStorage.setItem("auth_token", token);
+export interface LoginResponse {
+  access?: string;
+  refresh?: string;
+  tokens?: { access?: string; refresh?: string };
+  token?: string;
+  usuario?: unknown;
+}
+
+export function setToken(access: string | null, refresh?: string | null) {
+  if (access) localStorage.setItem("auth_token", access);
   else localStorage.removeItem("auth_token");
-}
-
-async function parseResponse(res: Response) {
-  const text = await res.text();
-  try { return text ? JSON.parse(text) : null; } catch { return text; }
-}
-
-async function request<T = unknown>(path: string, opts: RequestInit = {}): Promise<T> {
-  const headers: Record<string,string> = { ...(opts.headers as Record<string,string> || {}) };
-  if (!("Content-Type" in headers) && !(opts.body instanceof FormData)) headers["Content-Type"] = "application/json";
-  if (_token) headers["Authorization"] = `Bearer ${_token}`;
-
-  const res = await fetch(`${BASE}${path}`, { ...opts, headers });
-  const data = await parseResponse(res);
-  if (!res.ok) {
-    const err: ApiError = { status: res.status, data, message: (data && (data).message) ?? res.statusText };
-    throw err;
+  if (typeof refresh !== "undefined") {
+    if (refresh) localStorage.setItem("refresh_token", refresh);
+    else localStorage.removeItem("refresh_token");
   }
+}
+
+export function getRefreshToken(): string | null {
+  return localStorage.getItem("refresh_token");
+}
+
+export function clearTokens() {
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("current_user");
+}
+
+// cabecera con Authorization si hay token
+function getAuthHeaders() {
+  const token = localStorage.getItem("auth_token");
+  const headers: Record<string,string> = { "Content-Type": "application/json", "Accept": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
+
+/* ---------- Auth / endpoints específicos ---------- */
+
+/**
+ * loginUser:
+ * - Hace POST directo sin usar callApi (evita Authorization header automático)
+ * - Soporta tanto { username, password } como { email, password }
+ * - Guarda access/refresh según la respuesta del backend
+ */
+export async function loginUser(identifier: string, password: string) {
+  clearTokens(); // debe existir
+
+  const body = { username: identifier.trim(), email: identifier.trim(), password };
+  const res = await fetch(`${BASE}/api/usuarios/login/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw { status: res.status, data };
+
+  const access = data?.access ?? data?.tokens?.access ?? data?.token ?? null;
+  const refresh = data?.refresh ?? data?.tokens?.refresh ?? null;
+  if (access) setToken(String(access), refresh ? String(refresh) : null);
+
+  // guardar usuario si backend lo devuelve
+  if (data?.usuario) localStorage.setItem("current_user", JSON.stringify(data.usuario));
+  return data;
+}
+
+/** refresh token: POST /api/token/refresh/ */
+export async function refreshToken(): Promise<boolean> {
+  const refresh = getRefreshToken();
+  if (!refresh) return false;
+  try {
+    const res = await fetch(`${BASE}/api/token/refresh/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ refresh }),
+    });
+    if (!res.ok) throw new Error("refresh failed");
+    const data = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+    const access = data?.access ?? null;
+    if (access) {
+      setToken(String(access), refresh);
+      return true;
+    }
+    return false;
+  } catch {
+    clearTokens();
+    return false;
+  }
+}
+
+
+/* --------- Usuarios / Roles helpers --------- */
+
+/* Roles */
+export async function listRoles() {
+  return apiGet<Array<{ idRol: number; nombre: string; descripcion?: string }>>("/api/usuarios/roles/");
+}
+export async function createRole(payload: { nombre: string; descripcion?: string }) {
+  return apiPost("/api/usuarios/roles/", payload);
+}
+
+/* Usuarios */
+export async function listUsers() {
+  return apiGet<unknown[]>("/api/usuarios/");
+}
+export async function createUser(payload: { username: string; email?: string; password: string; rol: number }) {
+  return apiPost("/api/usuarios/", payload);
+}
+export async function getUser(id: number | string) {
+  return apiGet(`/api/usuarios/${id}/`);
+}
+export async function updateUser(id: number | string, payload: Partial<Record<string, unknown>>) {
+  return apiPatch(`/api/usuarios/${id}/`, payload);
+}
+export async function changePassword(payload: { id_usuario: number; password_actual: string; password_nueva: string }) {
+  return apiPost("/api/usuarios/cambiar-password/", payload);
+}
+export async function fetchProfile() {
+  return apiGet("/api/usuarios/me/");
+}
+
+/* Registrar cliente (endpoint público) */
+export async function registerClient(payload: {
+  username: string;
+  email: string;
+  password: string;
+  fcmToken?: string;
+}) {
+  // POST /api/usuarios/registrar/
+  return apiPost("/api/usuarios/registrar/", payload);
+}
+
+/* Buscar usuarios (ruta pública/auth según back) */
+export async function searchUsers(query: string) {
+  return apiGet(`/api/usuarios/buscar/?q=${encodeURIComponent(query)}`);
+}
+
+/* Actualizar FCM token */
+export async function updateFcmToken(id: number | string, fcmToken: string) {
+  return apiPatch(`/api/usuarios/${id}/fcm-token/`, { fcmToken });
+}
+
+/* Eliminar permanentemente (admin) */
+export async function deleteUserPermanent(id: number | string) {
+  return apiDelete(`/api/usuarios/${id}/permanent/`);
+}
+
+/* Buscar roles por query (si tu API tiene /roles/buscar/) */
+export async function searchRoles(q: string) {
+  return apiGet(`/api/usuarios/roles/buscar/?q=${encodeURIComponent(q)}`);
+}
+
+/* implementaciones faltantes de HTTP helpers */
+export async function apiGet<T = unknown>(path: string) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  console.debug("[apiGet] GET", url, getAuthHeaders());
+  const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
   return data as T;
 }
 
-export async function apiGet<T = unknown>(path: string) { return request<T>(path, { method: "GET" }); }
 export async function apiPost<T = unknown>(path: string, body?: unknown) {
-  const opts: RequestInit = { method: "POST", body: body instanceof FormData ? body : JSON.stringify(body) };
-  return request<T>(path, opts);
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  console.debug("[apiPost] POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
 }
+
 export async function apiPut<T = unknown>(path: string, body?: unknown) {
-  const opts: RequestInit = { method: "PUT", body: body instanceof FormData ? body : JSON.stringify(body) };
-  return request<T>(path, opts);
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
 }
-export async function apiDelete<T = unknown>(path: string) { return request<T>(path, { method: "DELETE" }); }
+
+export async function apiPatch<T = unknown>(path: string, body?: unknown) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: getAuthHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}
+
+export async function apiDelete<T = unknown>(path: string) {
+  const url = path.startsWith("http") ? path : `${BASE}${path}`;
+  const res = await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if (!res.ok) throw { status: res.status, data };
+  return data as T;
+}

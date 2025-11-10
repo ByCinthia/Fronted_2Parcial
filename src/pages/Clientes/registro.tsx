@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiGet, apiPost } from "../../services/api";
+import { apiGet, registerClient, loginUser } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type FormDataClient = {
@@ -8,6 +8,16 @@ type FormDataClient = {
   email: string;
   password: string;
   fcmToken?: string;
+};
+
+/* nuevo tipo para la respuesta del registro */
+type CreatedUser = {
+  idUsuario?: number;
+  username?: string;
+  email?: string;
+  fcmToken?: string | null;
+  telefono?: string | null;
+  rol?: { idRol?: number; nombre?: string } | null;
 };
 
 function extractError(e: unknown): string {
@@ -46,11 +56,10 @@ export default function RegistroCliente() {
     setError(null);
     setMessage(null);
     try {
-      const res = await apiGet(`/usuarios?email=${encodeURIComponent(form.email)}`);
+      const res = await apiGet(`/api/usuarios/?email=${encodeURIComponent(form.email)}`);
+      // res puede ser array o objeto, tratamos array
       if (Array.isArray(res) && res.length > 0) {
         setMessage(`Cliente encontrado: ${res[0].username ?? res[0].email}.`);
-      } else if (res && typeof res === "object" && (res as Record<string, unknown>).idUsuario) {
-        setMessage(`Cliente encontrado: ${(res as Record<string, unknown>).username ?? (res as Record<string, unknown>).email}`);
       } else {
         setMessage("No se encontraron clientes con ese email. Puedes registrarlo.");
       }
@@ -80,29 +89,27 @@ export default function RegistroCliente() {
     }
 
     try {
-      // Ajusta el endpoint si tu backend usa otra ruta
-      const res = await apiPost("/clientes/registrar", {
+      // Registrar cliente público (usa /registrar/)
+      const created = await registerClient({
         username: form.username,
         email: form.email,
         password: form.password,
-        fcmToken: form.fcmToken ?? null,
+        fcmToken: form.fcmToken,
       });
 
-      const data = res as Record<string, unknown>;
+      // convertir respuesta a tipo seguro en lugar de usar `any`
+      const createdUser = (created as unknown) as CreatedUser;
+      const createdName = createdUser.username ?? createdUser.email ?? "cliente";
+      setMessage(`Registro exitoso: ${createdName}`);
 
-      if (data?.tokens && (data.tokens as Record<string, unknown>).access) {
-        try {
-          localStorage.setItem("auth_token", String((data.tokens as Record<string, unknown>).access));
-          localStorage.setItem("refresh_token", String((data.tokens as Record<string, unknown>).refresh ?? ""));
-        } catch {
-          /* ignore storage errors */
-        }
-        setMessage("Registro exitoso. Redirigiendo...");
-        setTimeout(() => navigate("/shop"), 700);
-      } else {
-        setMessage((data.mensaje as string) ?? "Registro completado.");
-        setTimeout(() => navigate("/shop"), 700);
+      // intentar login automático, manejar fallo (no dejar catch vacío)
+      try {
+        await loginUser(form.username, form.password);
+      } catch (e) {
+        console.warn("Auto login failed:", e);
       }
+
+      setTimeout(() => navigate("/shop"), 700);
     } catch (err: unknown) {
       console.error(err);
       setError(extractError(err));

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { apiGet } from "../../services/api";
+import {  listUsers } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type User = {
@@ -19,8 +19,8 @@ export default function UserList() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await apiGet<User[]>("/usuarios");
-        setUsers(Array.isArray(data) ? data : []);
+        const data = await listUsers(); // GET /api/usuarios/
+        setUsers(Array.isArray(data) ? (data as User[]) : []);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la lista de usuarios.");

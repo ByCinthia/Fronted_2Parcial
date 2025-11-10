@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function DashboardHome() {
   return (
@@ -17,7 +18,7 @@ export default function DashboardHome() {
             <p className="text-muted">Gestiona tu inventario y catálogo completo de productos disponibles</p>
             <div className="module-footer">
               <span className="small kv">24 productos activos</span>
-              <a href="/dashboard/products" className="btn-ghost">Ver todos</a>
+              <Link to="/dashboard/products" className="btn-ghost">Ver todos</Link>
             </div>
           </div>
         </div>
@@ -28,7 +29,7 @@ export default function DashboardHome() {
             <p className="text-muted">Administra usuarios registrados y gestiona sus perfiles</p>
             <div className="module-footer">
               <span className="small kv">12 clientes activos</span>
-              <a href="/dashboard/clients" className="btn-ghost">Ver todos</a>
+              <Link to="/dashboard/clients" className="btn-ghost">Ver todos</Link>
             </div>
           </div>
         </div>
@@ -39,7 +40,7 @@ export default function DashboardHome() {
             <p className="text-muted">Seguimiento completo de ventas y entregas en tiempo real</p>
             <div className="module-footer">
               <span className="small kv">8 pedidos pendientes</span>
-              <a href="/dashboard/orders" className="btn-ghost">Ver todos</a>
+              <Link to="/dashboard/orders" className="btn-ghost">Ver todos</Link>
             </div>
           </div>
         </div>
@@ -50,7 +51,7 @@ export default function DashboardHome() {
             <p className="text-muted">Control de acceso y permisos del sistema administrativo</p>
             <div className="module-footer">
               <span className="small kv">3 usuarios activos</span>
-              <a href="/dashboard/users" className="btn-ghost">Ver todos</a>
+              <Link to="/dashboard/users" className="btn-ghost">Ver todos</Link>
             </div>
           </div>
         </div>
@@ -61,7 +62,7 @@ export default function DashboardHome() {
             <p className="text-muted">Análisis detallado de ventas y métricas de rendimiento</p>
             <div className="module-footer">
               <span className="small kv">Datos en tiempo real</span>
-              <a href="/dashboard/stats" className="btn-ghost">Ver reportes</a>
+              <Link to="/dashboard/stats" className="btn-ghost">Ver reportes</Link>
             </div>
           </div>
         </div>
@@ -72,7 +73,7 @@ export default function DashboardHome() {
             <p className="text-muted">Ajustes generales del sistema y personalización</p>
             <div className="module-footer">
               <span className="small kv">Panel de configuración</span>
-              <a href="/dashboard/settings" className="btn-ghost">Configurar</a>
+              <Link to="/dashboard/settings" className="btn-ghost">Configurar</Link>
             </div>
           </div>
         </div>

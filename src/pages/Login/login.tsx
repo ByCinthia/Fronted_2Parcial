@@ -1,27 +1,76 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/login.css";
+import { signIn } from "../../services/auth";
+
+type ApiErrorShape = {
+  data?: { detail?: string } | string;
+  detail?: string;
+  message?: string;
+  error?: string;
+};
+
+function getErrorMessage(err: unknown): string {
+  if (typeof err === "string") return err;
+  if (err instanceof Error) return err.message;
+  if (typeof err === "object" && err !== null) {
+    const e = err as ApiErrorShape & { data?: { non_field_errors?: string[] } };
+
+    // caso: { data: { non_field_errors: ["mensaje"] } }
+    if (e.data && typeof e.data === "object" && "non_field_errors" in e.data) {
+      const errors = (e.data as { non_field_errors?: string[] }).non_field_errors;
+      if (Array.isArray(errors) && errors.length > 0) {
+        return errors[0]; // devolver el primer error
+      }
+    }
+
+    // caso: { data: { detail: "..." } } o { data: "..." }
+    if (e.data) {
+      if (typeof e.data === "string") return e.data;
+      if (typeof (e.data as { detail?: string }).detail === "string") {
+        return (e.data as { detail?: string }).detail as string;
+      }
+    }
+
+    // caso: { detail: "..." } o { message: "..." } o { error: "..." }
+    if (typeof e.detail === "string") return e.detail;
+    if (typeof e.message === "string") return e.message;
+    if (typeof e.error === "string") return e.error;
+  }
+  return "No se pudo iniciar sesión";
+}
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+
+  // ahora "identifier" puede ser username o email
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorEmail, setErrorEmail] = useState("");
+  const [errorIdentifier, setErrorIdentifier] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
+  const [errorServer, setErrorServer] = useState("");
   const [success, setSuccess] = useState(false);
 
   const validate = () => {
     let ok = true;
-    setErrorEmail("");
+    setErrorIdentifier("");
     setErrorPassword("");
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRe.test(email)) {
-      setErrorEmail("Ingresa un correo válido.");
+
+    // si contiene '@' se valida como email, si no solo se requiere no vacío y longitud mínima
+    if (!identifier || identifier.trim().length < 3) {
+      setErrorIdentifier("Ingresa tu usuario o correo (mín. 3 caracteres).");
       ok = false;
+    } else if (identifier.includes("@")) {
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRe.test(identifier)) {
+        setErrorIdentifier("Ingresa un correo válido.");
+        ok = false;
+      }
     }
+
     if (!password || password.length < 6) {
       setErrorPassword("La contraseña debe tener al menos 6 caracteres.");
       ok = false;
@@ -29,18 +78,24 @@ export default function Login() {
     return ok;
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorServer("");
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // signIn intentará username y email (según implementación en services)
+      await signIn(identifier.trim(), password);
       setSuccess(true);
-      // Redirigir al dashboard después de mostrar el éxito
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
-    }, 900);
+      // opcional: recordar token en localStorage se maneja en api.loginUser
+      setTimeout(() => navigate("/dashboard"), 900);
+    } catch (err: unknown) {
+      console.error("Login error:", err);
+      const msg = getErrorMessage(err);
+      setErrorServer(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,18 +119,18 @@ export default function Login() {
                 <div className="soft-field">
                   <div className="field-container">
                     <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      id="identifier"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
                       placeholder=" "
-                      autoComplete="email"
+                      autoComplete="username email"
                       required
                     />
-                    <label htmlFor="email">Correo electrónico</label>
+                    <label htmlFor="identifier">Usuario o correo</label>
                     <div className="field-accent" />
                   </div>
-                  <span className={`gentle-error ${errorEmail ? "show" : ""}`}>{errorEmail}</span>
+                  <span className={`gentle-error ${errorIdentifier ? "show" : ""}`}>{errorIdentifier}</span>
                 </div>
 
                 <div className="soft-field">
@@ -96,18 +151,14 @@ export default function Login() {
                       className={`gentle-toggle ${showPwd ? "toggle-active" : ""}`}
                       onClick={() => setShowPwd((s) => !s)}
                     >
-                      <svg className="toggle-icon eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
-                      </svg>
-                      <svg className="toggle-icon eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M1 1l22 22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      <span className="toggle-icon">{showPwd ? "🙈" : "👁️"}</span>
                     </button>
                     <div className="field-accent" />
                   </div>
                   <span className={`gentle-error ${errorPassword ? "show" : ""}`}>{errorPassword}</span>
                 </div>
+
+                {errorServer && <div className="server-error" role="alert">{errorServer}</div>}
 
                 <div className="comfort-options">
                   <label className="gentle-checkbox">
