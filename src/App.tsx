@@ -9,6 +9,7 @@ import DashboardHome from "./pages/Dashboard/index";
 /* Módulos del dashboard */
 import ProductosAdmin from "./pages/Productos/productos";
 import ProductForm from "./pages/Productos/inventario";
+import InventoryPanel from "./pages/Productos/inventarioPanel";
 import RegistroCliente from "./pages/Clientes/registro";
 import ClientList from "./pages/Clientes/ClientList";
 import ClientForm from "./pages/Clientes/ClientForm";
@@ -17,6 +18,8 @@ import UserForm from "./pages/Usuarios/user_form";
 import RolesPage from "./pages/Roles/roles";
 import OrderList from "./pages/Pedidos/OrderList";
 import OrderForm from "./pages/Pedidos/OrderForm";
+import CategoriasAdmin from "./pages/Categorias/categorias";
+import CategoryForm from "./pages/Categorias/categoria";
 
 /* Estilos globales */
 import './Styles/layout_base.css';
@@ -41,6 +44,7 @@ export default function App() {
             <Route path="products" element={<ProductosAdmin />} />
             <Route path="products/new" element={<ProductForm />} />
             <Route path="products/:id" element={<ProductForm />} />
+            <Route path="inventory" element={<InventoryPanel />} />
 
             {/* Clientes */}
             <Route path="clients" element={<ClientList />} />
@@ -54,6 +58,11 @@ export default function App() {
 
             {/* Roles (nueva ruta) */}
             <Route path="roles" element={<RolesPage />} />
+
+            {/* Categorías */}
+            <Route path="categories" element={<CategoriasAdmin />} />
+            <Route path="categories/new" element={<CategoryForm />} />
+            <Route path="categories/:id" element={<CategoryForm />} />
 
             {/* Pedidos */}
             <Route path="orders" element={<OrderList />} />

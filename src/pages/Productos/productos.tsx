@@ -6,16 +6,52 @@ import "../../Styles/modulos.css";
 type Product = {
   id?: number;
   idProducto?: number;
-  nombre: string;
-  categoria?: string;
+  nombre?: string;
+  name?: string;
+  categoria?: string | { idCategoria?: number; id?: number; nombre?: string };
   talla?: string;
   color?: string;
-  tipo?: string;
   precio?: number;
+  base_price?: number;
+  active?: boolean;
   stock?: number;
   imagen?: string;
   fecha_creacion?: string;
 };
+
+function productLabel(p: Product): string {
+  return p.nombre ?? p.name ?? "";
+}
+
+function priceValue(p: Product): number {
+  const raw = (p.precio ?? p.base_price ?? 0) as unknown;
+  // coerce to number safely
+  if (typeof raw === "number") {
+    return Number.isFinite(raw) ? raw : 0;
+  }
+  if (typeof raw === "string") {
+    const parsed = parseFloat(raw.replace(/[^0-9.-]+/g, ""));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
+function categoryLabel(categoria: any): string {
+  if (!categoria) return "";
+  if (typeof categoria === "string") return categoria;
+  if (typeof categoria === "object") {
+    if (typeof (categoria as any).nombre === "string") return (categoria as any).nombre;
+    if (typeof (categoria as any).name === "string") return (categoria as any).name;
+    if ((categoria as any).idCategoria) return String((categoria as any).idCategoria);
+    if ((categoria as any).id) return String((categoria as any).id);
+    try {
+      return JSON.stringify(categoria);
+    } catch {
+      return "";
+    }
+  }
+  return String(categoria);
+}
 
 function extractError(e: unknown): string {
   if (!e) return "Error desconocido";
@@ -91,14 +127,14 @@ export default function ProductosAdmin() {
                   )}
                 </div>
                 <div className="module-body">
-                  <h3>{p.nombre}</h3>
+                  <h3>{productLabel(p)}</h3>
                   <div className="module-meta">
-                    <span>{p.categoria}</span>
+                    <span>{categoryLabel(p.categoria)}</span>
                     <span>{p.talla}</span>
                     <span>{p.color}</span>
                   </div>
                   <div className="module-footer">
-                    <strong>${(p.precio ?? 0).toFixed(2)}</strong>
+                    <strong>${priceValue(p).toFixed(2)}</strong>
                     <div className="actions">
                       <button onClick={() => navigate(`/dashboard/products/${id}`)} className="btn-ghost">Editar</button>
                       <button onClick={() => handleDelete(id)} className="btn-danger">Eliminar</button>

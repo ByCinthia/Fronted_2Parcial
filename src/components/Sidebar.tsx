@@ -14,6 +14,8 @@ type NavItem = {
 const navItems: NavItem[] = [
   { to: "/dashboard", label: "Resumen", icon: "🏠", exact: true },
   { to: "/dashboard/products", label: "Productos", icon: "📦" },
+    { to: "/dashboard/categories", label: "Categorías", icon: "🏷️" },
+    { to: "/dashboard/inventory", label: "Inventario", icon: "📊" },
   { to: "/dashboard/orders", label: "Pedidos", icon: "📋" },
   { to: "/dashboard/clients", label: "Clientes", icon: "👥" },
   { 

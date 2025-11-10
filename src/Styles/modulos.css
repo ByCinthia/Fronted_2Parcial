@@ -96,6 +96,55 @@
   min-height: calc(100vh - 120px); /* ocupa el resto de la altura */
 }
 
+/* Inventario: tabla compacta dentro de module-list */
+.inventory-container .module-list {
+  padding: 16px;
+  gap: 8px;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.inventory-table thead th {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+}
+.inventory-table tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  vertical-align: middle;
+}
+.inventory-table tbody tr { height: 42px; }
+
+/* Compact module-card list (used by Productos listing) */
+.module-list.compact {
+  gap: 12px;
+  padding: 16px;
+}
+
+/* Small button variant for inline actions */
+.btn-small {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-action {
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--wine);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.btn-action:hover {
+  background: var(--soft-pink);
+  border-color: var(--wine);
+}
+
 /* Cards que ocupan su espacio completo */
 .module-card {
   background: var(--card);

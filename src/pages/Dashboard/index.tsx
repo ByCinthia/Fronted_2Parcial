@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 export default function DashboardHome() {
@@ -19,6 +18,28 @@ export default function DashboardHome() {
             <div className="module-footer">
               <span className="small kv">24 productos activos</span>
               <Link to="/dashboard/products" className="btn-ghost">Ver todos</Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="module-card">
+          <div className="module-body">
+            <h3>📊 Inventario</h3>
+            <p className="text-muted">Vista centralizada del stock: detecta productos con bajo stock o agotados</p>
+            <div className="module-footer">
+              <span className="small kv">Panel de control</span>
+              <Link to="/dashboard/inventory" className="btn-ghost">Ir al inventario</Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="module-card">
+          <div className="module-body">
+            <h3>🏷️ Categorías</h3>
+            <p className="text-muted">Administra las categorías que organizan tu catálogo de productos</p>
+            <div className="module-footer">
+              <span className="small kv">0 categorías</span>
+              <Link to="/dashboard/categories" className="btn-ghost">Ver todas</Link>
             </div>
           </div>
         </div>
