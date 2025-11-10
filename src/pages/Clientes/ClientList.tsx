@@ -27,19 +27,20 @@ export default function ClientList() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await listUsers(); // usa helper listUsers -> GET /api/usuarios/
+        const data = await listUsers();
         const users = (data as BackendUser[]) || [];
-        setClients(
-          Array.isArray(users)
-            ? users.map(u => ({
+        const clientes = Array.isArray(users)
+          ? users
+              .filter(u => u.rol?.nombre === "Cliente") // <- filtrar solo clientes
+              .map(u => ({
                 id: u.idUsuario,
                 nombre: u.username,
                 email: u.email,
                 telefono: u.telefono,
                 rolNombre: u.rol?.nombre,
               }))
-            : []
-        );
+          : [];
+        setClients(clientes);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la lista de clientes.");

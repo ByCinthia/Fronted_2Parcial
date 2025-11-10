@@ -5,6 +5,7 @@ import "../../Styles/modulos.css";
 
 type User = {
   id?: number;
+  idUsuario?: number;
   username?: string;
   email?: string;
   idRol?: number;
@@ -42,7 +43,7 @@ export default function UserList() {
       {loading ? <p>Cargando…</p> : error ? <p className="err">{error}</p> : (
         <div className="module-list">
           {users.map(u => (
-            <article key={u.id} className="module-card">
+            <article key={u.id ?? u.idUsuario ?? u.username} className="module-card">
               <div className="module-body">
                 <h3>{u.username}</h3>
                 <div className="module-meta">

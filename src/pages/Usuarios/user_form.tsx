@@ -4,7 +4,6 @@ import { apiGet, apiPost, apiPut, listRoles } from "../../services/api";
 import "../../Styles/modulos.css";
 
 type Role = { idRol: number; nombre: string };
-type CurrentUser = { rol?: { nombre?: string } } | null;
 type FormState = { username: string; email: string; password: string; rol: number };
 type UserPayload = { username: string; email: string; idRol?: number | null; password?: string };
 
@@ -17,35 +16,20 @@ export default function UserForm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // obtener usuario logueado desde localStorage
-    const raw = localStorage.getItem("current_user");
-    if (!raw) return; // no logueado -> no cargar roles
-    try {
-      const user = JSON.parse(raw) as CurrentUser;
-      const rolNombre = (user?.rol?.nombre || "").toString().toLowerCase();
-      // condición: solo si es SuperAdmin (o contiene 'admin')
-      if (!rolNombre.includes("admin")) return;
-
-      let mounted = true;
-      listRoles()
-        .then((data: unknown) => {
-          if (!mounted) return;
-          if (Array.isArray(data)) {
-            setRoles(data as Role[]);
-          } else {
-            console.warn("listRoles no devolvió array:", data);
-          }
-        })
-        .catch((err) => {
-          console.error("Error cargando roles:", err);
-        });
-      return () => {
-        mounted = false;
-      };
-    } catch (e) {
-      console.error("Error parseando current_user:", e);
-      return;
-    }
+    // cargar roles si hay token (GET /roles requiere autenticación)
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    let mounted = true;
+    listRoles()
+      .then((data: unknown) => {
+        if (!mounted) return;
+        if (Array.isArray(data)) setRoles(data as Role[]);
+        else console.warn("listRoles no devolvió array:", data);
+      })
+      .catch((err) => {
+        console.error("Error cargando roles:", err);
+      });
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
@@ -68,18 +52,28 @@ export default function UserForm() {
   }, [id]);
 
   const handle = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.name === "rol" ? parseInt(e.target.value || "0", 10) : e.target.value,
+    });
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
+      // validar rol seleccionado al crear
+      if (!id && (!form.rol || Number(form.rol) === 0)) {
+        setError("Debe seleccionar un rol.");
+        setLoading(false);
+        return;
+      }
+
       const payload: UserPayload = {
         username: form.username,
         email: form.email,
-        idRol: form.rol ? parseInt(String(form.rol), 10) : null,
+        // usamos idRol para ajustarnos al tipo declarado y al backend
+        idRol: form.rol ? Number(form.rol) : undefined,
       };
 
       if (form.password) payload.password = form.password;
