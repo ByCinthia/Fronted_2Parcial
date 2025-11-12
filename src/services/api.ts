@@ -1,168 +1,317 @@
 /**
- * Cliente HTTP ligero con refresco automático de token.
- * - Usa import.meta.env.VITE_API_URL como base.
- * - Provee helpers apiGet/apiPost/... y endpoints de usuarios/roles.
- * - Guarda tokens en localStorage: "auth_token" y "refresh_token".
+ * Cliente HTTP para comunicación con el backend
+ * Maneja tokens JWT y peticiones autenticadas
  */
 
-// Preferir VITE_API_URL; si no existe, usar rutas relativas para aprovechar el proxy de Vite en dev.
-const BASE = (import.meta.env.VITE_API_URL as string) || "";
+// Base URL del API - usar variable de entorno o valor por defecto
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// helpers de tokens / tipos usados por el módulo
-
+/**
+ * Interfaz para la respuesta del login
+ */
 export interface LoginResponse {
-  access?: string;
-  refresh?: string;
-  tokens?: { access?: string; refresh?: string };
-  token?: string;
-  usuario?: unknown;
+  refresh: string;
+  access: string;
+  usuario: {
+    idUsuario: number;
+    username: string;
+    email: string;
+    fcmToken: string | null;
+    rol: {
+      idRol: number;
+      nombre: string; // "Admin" o "Cliente"
+      descripcion: string;
+    };
+    fecha_creacion: string;
+    fecha_actualizacion: string;
+    activo: boolean;
+  };
 }
 
-export function setToken(access: string | null, refresh?: string | null) {
-  if (access) localStorage.setItem("auth_token", access);
-  else localStorage.removeItem("auth_token");
-  if (typeof refresh !== "undefined") {
-    if (refresh) localStorage.setItem("refresh_token", refresh);
-    else localStorage.removeItem("refresh_token");
-  }
+/**
+ * Interfaz para el usuario almacenado
+ */
+export interface User {
+  idUsuario: number;
+  username: string;
+  email: string;
+  rol: {
+    idRol: number;
+    nombre: string;
+    descripcion: string;
+  };
 }
 
+/**
+ * Guarda el token de acceso en localStorage
+ */
+export function setToken(token: string): void {
+  localStorage.setItem("auth_token", token);
+}
+
+/**
+ * Obtiene el token de acceso desde localStorage
+ */
+export function getToken(): string | null {
+  return localStorage.getItem("auth_token");
+}
+
+/**
+ * Guarda el token de refresco en localStorage
+ */
+export function setRefreshToken(token: string): void {
+  localStorage.setItem("refresh_token", token);
+}
+
+/**
+ * Obtiene el token de refresco desde localStorage
+ */
 export function getRefreshToken(): string | null {
   return localStorage.getItem("refresh_token");
 }
 
-export function clearTokens() {
+/**
+ * Guarda el usuario en localStorage
+ */
+export function setUser(user: User): void {
+  localStorage.setItem("current_user", JSON.stringify(user));
+  // Guardar el rol por separado para fácil acceso
+  localStorage.setItem("user_role", user.rol.nombre);
+}
+
+/**
+ * Obtiene el usuario desde localStorage
+ */
+export function getUser(): User | null {
+  const userStr = localStorage.getItem("current_user");
+  if (!userStr) return null;
+  try {
+    return JSON.parse(userStr) as User;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Obtiene el rol del usuario desde localStorage
+ */
+export function getUserRole(): string | null {
+  return localStorage.getItem("user_role");
+}
+
+/**
+ * Limpia todos los tokens y datos de usuario
+ */
+export function clearTokens(): void {
   localStorage.removeItem("auth_token");
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("current_user");
+  localStorage.removeItem("user_role");
 }
 
-// cabecera con Authorization si hay token
-function getAuthHeaders(): Record<string,string> {
-  const token = localStorage.getItem("auth_token");
-  const headers: Record<string,string> = { "Content-Type": "application/json", "Accept": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+/**
+ * Obtiene los headers para peticiones autenticadas
+ */
+function getAuthHeaders(): HeadersInit {
+  const token = getToken();
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   return headers;
 }
 
-export async function apiGet<T = unknown>(path: string) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, { method: "GET", headers: getAuthHeaders() });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
+/**
+ * Realiza petición GET autenticada
+ */
+export async function apiGet<T = unknown>(path: string): Promise<T> {
+  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw { status: response.status, data };
+  }
+
   return data as T;
 }
 
-export async function apiPost<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  console.debug("[apiPost] POST", url);
-  const res = await fetch(url, {
+/**
+ * Realiza petición POST autenticada
+ */
+export async function apiPost<T = unknown>(
+  path: string,
+  body?: unknown
+): Promise<T> {
+  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
+
+  const response = await fetch(url, {
     method: "POST",
     headers: getAuthHeaders(),
     body: body ? JSON.stringify(body) : undefined,
   });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw { status: response.status, data };
+  }
+
   return data as T;
 }
 
-export async function apiPut<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, {
+/**
+ * Realiza petición PUT autenticada
+ */
+export async function apiPut<T = unknown>(
+  path: string,
+  body?: unknown
+): Promise<T> {
+  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
+
+  const response = await fetch(url, {
     method: "PUT",
     headers: getAuthHeaders(),
     body: body ? JSON.stringify(body) : undefined,
   });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw { status: response.status, data };
+  }
+
   return data as T;
 }
 
-export async function apiPatch<T = unknown>(path: string, body?: unknown) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, {
+/**
+ * Realiza petición PATCH autenticada
+ */
+export async function apiPatch<T = unknown>(
+  path: string,
+  body?: unknown
+): Promise<T> {
+  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
+
+  const response = await fetch(url, {
     method: "PATCH",
     headers: getAuthHeaders(),
     body: body ? JSON.stringify(body) : undefined,
   });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw { status: response.status, data };
+  }
+
   return data as T;
 }
-
-export async function apiDelete<T = unknown>(path: string) {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
-  const txt = await res.text();
-  const data = txt ? JSON.parse(txt) : null;
-  if (!res.ok) throw { status: res.status, data };
-  return data as T;
-}
-
-/* ---------- Auth / endpoints específicos ---------- */
 
 /**
- * loginUser:
- * - Hace POST directo sin usar callApi (evita Authorization header automático)
- * - Soporta tanto { username, password } como { email, password }
- * - Guarda access/refresh según la respuesta del backend
+ * Realiza petición DELETE autenticada
  */
-export async function loginUser(identifier: string, password: string) {
-  const path = "/api/usuarios/login/";
-  const url = `${BASE.replace(/\/+$/, "")}${path}`;
+export async function apiDelete<T = unknown>(path: string): Promise<T> {
+  const url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
 
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ username: identifier, email: identifier, password }),
-    });
-  } catch (networkErr) {
-    console.error("[loginUser] network error:", networkErr);
-    throw { status: 0, data: "Network error or blocked by CORS" };
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw { status: response.status, data };
   }
 
-  const ct = res.headers.get("content-type") || "";
-  const payload = ct.includes("application/json") ? await res.json().catch(() => null) : await res.text().catch(() => null);
-
-  if (!res.ok) throw { status: res.status, data: payload };
-
-  // guardar tokens y usuario
-  const access = payload?.access ?? payload?.tokens?.access ?? payload?.token ?? null;
-  const refresh = payload?.refresh ?? payload?.tokens?.refresh ?? null;
-  if (access) {
-    localStorage.setItem("auth_token", String(access));
-    if (refresh) localStorage.setItem("refresh_token", String(refresh));
-  }
-  if (payload?.usuario) {
-    localStorage.setItem("current_user", JSON.stringify(payload.usuario));
-  }
-
-  return payload;
+  return data as T;
 }
 
-/** refresh token: POST /api/token/refresh/ */
-export async function refreshToken(): Promise<boolean> {
+/**
+ * Realiza login y guarda los tokens y datos del usuario
+ */
+export async function loginUser(
+  email: string,
+  password: string
+): Promise<LoginResponse> {
+  const url = `${BASE_URL}/api/usuarios/login/`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw {
+      status: response.status,
+      data: errorData,
+    };
+  }
+
+  const data: LoginResponse = await response.json();
+
+  // Guardar tokens
+  setToken(data.access);
+  setRefreshToken(data.refresh);
+
+  // Guardar usuario y rol
+  setUser({
+    idUsuario: data.usuario.idUsuario,
+    username: data.usuario.username,
+    email: data.usuario.email,
+    rol: data.usuario.rol,
+  });
+
+  return data;
+}
+
+/**
+ * Refresca el token de acceso usando el refresh token
+ */
+export async function refreshAccessToken(): Promise<boolean> {
   const refresh = getRefreshToken();
   if (!refresh) return false;
+
   try {
-    const res = await fetch(`${BASE}/api/token/refresh/`, {
+    const url = `${BASE_URL}/api/token/refresh/`;
+    const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ refresh }),
     });
-    if (!res.ok) throw new Error("refresh failed");
-    const data = (await res.json().catch(() => null)) as Record<string, unknown> | null;
-    const access = data?.access ?? null;
-    if (access) {
-      setToken(String(access), refresh);
+
+    if (!response.ok) throw new Error("Refresh failed");
+
+    const data = await response.json();
+    if (data.access) {
+      setToken(data.access);
       return true;
     }
+
     return false;
   } catch {
     clearTokens();
@@ -170,64 +319,9 @@ export async function refreshToken(): Promise<boolean> {
   }
 }
 
-
-/* --------- Usuarios / Roles helpers --------- */
-
-/* Roles */
-export async function listRoles() {
-  return apiGet<Array<{ idRol: number; nombre: string; descripcion?: string }>>("/api/usuarios/roles/");
-}
-export async function createRole(payload: { nombre: string; descripcion?: string }) {
-  return apiPost("/api/usuarios/roles/", payload);
-}
-
-/* Usuarios */
-export async function listUsers() {
-  return apiGet<unknown[]>("/api/usuarios/");
-}
-export async function createUser(payload: { username: string; email?: string; password: string; rol: number }) {
-  return apiPost("/api/usuarios/", payload);
-}
-export async function getUser(id: number | string) {
-  return apiGet(`/api/usuarios/${id}/`);
-}
-export async function updateUser(id: number | string, payload: Partial<Record<string, unknown>>) {
-  return apiPatch(`/api/usuarios/${id}/`, payload);
-}
-export async function changePassword(payload: { id_usuario: number; password_actual: string; password_nueva: string }) {
-  return apiPost("/api/usuarios/cambiar-password/", payload);
-}
-export async function fetchProfile() {
-  return apiGet("/api/usuarios/me/");
-}
-
-/* Registrar cliente (endpoint público) */
-export async function registerClient(payload: {
-  username: string;
-  email: string;
-  password: string;
-  fcmToken?: string;
-}) {
-  // POST /api/usuarios/registrar/
-  return apiPost("/api/usuarios/registrar/", payload);
-}
-
-/* Buscar usuarios (ruta pública/auth según back) */
-export async function searchUsers(query: string) {
-  return apiGet(`/api/usuarios/buscar/?q=${encodeURIComponent(query)}`);
-}
-
-/* Actualizar FCM token */
-export async function updateFcmToken(id: number | string, fcmToken: string) {
-  return apiPatch(`/api/usuarios/${id}/fcm-token/`, { fcmToken });
-}
-
-/* Eliminar permanentemente (admin) */
-export async function deleteUserPermanent(id: number | string) {
-  return apiDelete(`/api/usuarios/${id}/permanent/`);
-}
-
-/* Buscar roles por query (si tu API tiene /roles/buscar/) */
-export async function searchRoles(q: string) {
-  return apiGet(`/api/usuarios/roles/buscar/?q=${encodeURIComponent(q)}`);
+/**
+ * Obtiene el perfil del usuario actual
+ */
+export async function fetchProfile(): Promise<User> {
+  return apiGet<User>("/api/usuarios/me/");
 }

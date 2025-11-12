@@ -1,38 +1,38 @@
 /* Estilos compartidos para módulos - FLEXIBLES */
 
 /* Variables globales */
-:root{
-  --cream: #FFFCE9;        /* blanco cálido */
-  --cream-2: #DDD9CE;      /* crema */
-  --soft-pink: #E3C1B4;
-  --pink-deep: #E3C1B4;
-  --pink-accent: #E3C1B4;
-  --wine: #610C27;         /* vino principal */
-  --beige: #AC9C8D;
+:root {
+  --cream: #fffce9; /* blanco cálido */
+  --cream-2: #ddd9ce; /* crema */
+  --soft-pink: #e3c1b4;
+  --pink-deep: #e3c1b4;
+  --pink-accent: #e3c1b4;
+  --wine: #610c27; /* vino principal */
+  --beige: #ac9c8d;
   --pearl: #f5f3f2;
   --text-dark: #050505;
-  --muted: rgba(172,156,141,0.65);
-  --line: rgba(97,12,39,0.06);
+  --muted: rgba(172, 156, 141, 0.65);
+  --line: rgba(97, 12, 39, 0.06);
   --card: #ffffff;
-  --shadow-soft: 0 8px 24px rgba(97,12,39,0.06);
+  --shadow-soft: 0 8px 24px rgba(97, 12, 39, 0.06);
   --input-bg: #fbfaf9;
-  --input-border: rgba(97,12,39,0.08);
+  --input-border: rgba(97, 12, 39, 0.08);
   --header-bg: linear-gradient(135deg, var(--cream), var(--soft-pink));
-  --module-bg: rgba(255,255,255,0.95);
+  --module-bg: rgba(255, 255, 255, 0.95);
   --gold: #d4af37;
 }
 
 /* MÓDULO BASE - OCUPA TODO EL ANCHO DISPONIBLE */
 .module-root {
-  background: transparent;        /* wrapper transparente, no crea franja */
-  backdrop-filter: none;          /* no forzar blur en el wrapper */
-  border: 0;                      /* sin borde que genere línea */
+  background: transparent; /* wrapper transparente, no crea franja */
+  backdrop-filter: none; /* no forzar blur en el wrapper */
+  border: 0; /* sin borde que genere línea */
   overflow: visible;
   box-shadow: none;
   box-sizing: border-box;
-  min-height: auto;               /* NO 100vh aquí */
+  min-height: auto; /* NO 100vh aquí */
   margin: 0;
-  padding: 0;                     /* el padding se maneja dentro de module-header / module-list */
+  padding: 0; /* el padding se maneja dentro de module-header / module-list */
 }
 
 /* Header con fondo glassmorphism que ocupa todo el ancho */
@@ -53,13 +53,18 @@
 
 /* Efecto glassmorphism para el header */
 .module-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(227,193,180,0.10) 50%, rgba(255,255,255,0.3) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(227, 193, 180, 0.1) 50%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
   pointer-events: none;
   z-index: 1;
 }
@@ -114,10 +119,12 @@
 }
 .inventory-table tbody td {
   padding: 8px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
   vertical-align: middle;
 }
-.inventory-table tbody tr { height: 42px; }
+.inventory-table tbody tr {
+  height: 42px;
+}
 
 /* Compact module-card list (used by Productos listing) */
 .module-list.compact {
@@ -159,13 +166,17 @@
 
 .module-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 36px rgba(97,12,39,0.10);
+  box-shadow: 0 18px 36px rgba(97, 12, 39, 0.1);
   border-color: var(--wine);
 }
 
 .module-body {
   padding: 28px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,246,244,0.6));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 246, 244, 0.6)
+  );
   min-height: 180px;
   display: flex;
   flex-direction: column;
@@ -192,7 +203,7 @@
   align-items: center;
   margin-top: auto;
   padding-top: 20px;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* BOTONES MEJORADOS */
@@ -207,7 +218,7 @@
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(97,12,39,0.12);
+  box-shadow: 0 12px 28px rgba(97, 12, 39, 0.12);
 }
 
 .btn-ghost {
@@ -226,21 +237,21 @@
 
 /* FORMULARIOS QUE OCUPAN TODO EL ANCHO */
 .module-form {
-  max-width: 900px;            /* ancho cómodo para formularios */
-  margin: 24px auto;           /* centra y deja espacio superior/inferior */
-  padding: 20px;               /* padding más compacto */
-  background: var(--card);     /* mantiene fondo de tarjeta */
-  border-radius: 12px;         /* suaviza esquinas */
+  max-width: 900px; /* ancho cómodo para formularios */
+  margin: 24px auto; /* centra y deja espacio superior/inferior */
+  padding: 20px; /* padding más compacto */
+  background: var(--card); /* mantiene fondo de tarjeta */
+  border-radius: 12px; /* suaviza esquinas */
   box-shadow: var(--shadow-soft);
   border: 1px solid var(--line);
   box-sizing: border-box;
-  min-height: auto;            /* no forzar altura de viewport */
+  min-height: auto; /* no forzar altura de viewport */
 }
 
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;                   /* menos espacio entre columnas */
+  gap: 16px; /* menos espacio entre columnas */
   margin-bottom: 20px;
 }
 
@@ -270,7 +281,7 @@
 .module-form select:focus {
   outline: none;
   border-color: var(--wine);
-  box-shadow: 0 0 0 4px rgba(97,12,39,0.06);
+  box-shadow: 0 0 0 4px rgba(97, 12, 39, 0.06);
   transform: none;
 }
 
@@ -299,8 +310,14 @@
 }
 
 /* Utilidades */
-.text-muted { color: var(--muted); }
-.kv { color: var(--muted); font-size: 1rem; font-weight: 500; }
+.text-muted {
+  color: var(--muted);
+}
+.kv {
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
 
 /* Responsive completo */
 @media (max-width: 1400px) {
@@ -317,11 +334,11 @@
     gap: 24px;
     padding: 28px;
   }
-  
+
   .module-header {
     padding: 24px 32px;
   }
-  
+
   .module-header h1,
   .module-header h2 {
     font-size: 1.8rem;
@@ -334,28 +351,28 @@
     gap: 20px;
     padding: 24px;
   }
-  
+
   .module-header {
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
     padding: 20px 24px;
   }
-  
+
   .module-header h1,
   .module-header h2 {
     font-size: 1.6rem;
     text-align: center;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .module-form {
     padding: 28px;
   }
@@ -367,21 +384,104 @@
     gap: 16px;
     padding: 20px;
   }
-  
+
   .module-card {
     min-height: 180px;
   }
-  
+
   .module-body {
     padding: 24px;
   }
-  
+
   .module-header {
     padding: 20px;
   }
-  
+
   .module-header h1,
   .module-header h2 {
     font-size: 1.4rem;
+  }
+}
+
+/* ============================================================ */
+/* 📦 ESTILOS ESPECÍFICOS PARA PROVEEDORES */
+/* ============================================================ */
+
+/* Celda de proveedor con avatar */
+.proveedor-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.proveedor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--wine), var(--gold));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(97, 12, 39, 0.15);
+}
+
+.proveedor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.proveedor-nombre {
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+/* Celda de contacto */
+.contact-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.contact-cell svg {
+  color: var(--wine);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Texto muted */
+.text-muted {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Centrar texto */
+.text-center {
+  text-align: center;
+}
+
+/* Responsive para proveedores */
+@media (max-width: 768px) {
+  .proveedor-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .contact-cell {
+    font-size: 13px;
+  }
+
+  .contact-cell svg {
+    width: 14px;
+    height: 14px;
   }
 }
