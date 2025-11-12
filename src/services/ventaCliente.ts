@@ -124,10 +124,10 @@ export interface RespuestaCompraCuotas {
  * Respuesta al generar link de pago para cuota
  */
 export interface RespuestaLinkPago {
-  checkout_url: string;
+  url: string;
   session_id: string;
-  cuota_id: number;
   monto: number;
+  cuota: Cuota;
 }
 
 /**

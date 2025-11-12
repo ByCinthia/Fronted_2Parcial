@@ -96,7 +96,7 @@ export default function VentasPage() {
         duration: 2000,
       });
       setTimeout(() => {
-        window.location.href = respuesta.checkout_url;
+        window.location.href = respuesta.url;
       }, 1500);
     } catch (err: unknown) {
       console.error("Error al generar link de pago:", err);

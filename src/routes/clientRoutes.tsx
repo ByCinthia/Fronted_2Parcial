@@ -24,6 +24,11 @@ export const clientRoutes: RouteObject[] = [
     path: "/carrito",
     element: <CarritoPage />,
   },
+  // La ruta más específica debe ir ANTES de la general
+  {
+    path: "/ventas/exito",
+    element: <PagoExitosoPage />,
+  },
   {
     path: "/ventas",
     element: <VentasPage />,
@@ -35,9 +40,5 @@ export const clientRoutes: RouteObject[] = [
   {
     path: "/cuotas",
     element: <VentasPage />,
-  },
-  {
-    path: "/ventas/exito",
-    element: <PagoExitosoPage />,
   },
 ];
