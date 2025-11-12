@@ -1,0 +1,414 @@
+/* ============================================================ */
+/* ✅ PÁGINA DE PAGO EXITOSO */
+/* ============================================================ */
+
+.pago-exitoso-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #610c27 0%, #8b1538 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================ */
+/* ANIMACIÓN DE CONFETI */
+/* ============================================================ */
+
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  opacity: 0;
+  animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -10%;
+    opacity: 1;
+    transform: translateX(0) rotateZ(0deg);
+  }
+  100% {
+    top: 110%;
+    opacity: 0.5;
+    transform: translateX(100px) rotateZ(720deg);
+  }
+}
+
+/* ============================================================ */
+/* CONTENEDOR PRINCIPAL */
+/* ============================================================ */
+
+.pago-exitoso-container {
+  max-width: 700px;
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 60px 40px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: slide-up 0.6s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================ */
+/* ICONO DE ÉXITO */
+/* ============================================================ */
+
+.success-icon-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 32px;
+}
+
+.success-circle {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3);
+  animation: pulse-success 2s ease-in-out infinite;
+}
+
+.success-icon {
+  font-size: 80px;
+  color: white;
+  animation: scale-in 0.6s ease-out 0.3s both;
+}
+
+.celebration-icon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #d4af37;
+  animation: bounce-celebration 1s ease-in-out infinite;
+}
+
+@keyframes pulse-success {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 40px rgba(40, 167, 69, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 10px 50px rgba(40, 167, 69, 0.5);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-celebration {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(15deg);
+  }
+}
+
+/* ============================================================ */
+/* CONTENIDO */
+/* ============================================================ */
+
+.pago-exitoso-content {
+  animation: fade-in 0.8s ease-out 0.4s both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pago-exitoso-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #2d3748;
+  margin: 0 0 16px 0;
+}
+
+.pago-exitoso-mensaje {
+  font-size: 18px;
+  color: #718096;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+}
+
+/* ============================================================ */
+/* INFORMACIÓN DE TRANSACCIÓN */
+/* ============================================================ */
+
+.transaction-info {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.transaction-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transaction-id {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: #2d3748;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  word-break: break-all;
+  font-weight: 600;
+}
+
+/* ============================================================ */
+/* PASOS SIGUIENTES */
+/* ============================================================ */
+
+.next-steps {
+  background: #f7fafc;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.next-steps-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.next-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.next-steps-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 15px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.next-steps-list li:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.step-icon {
+  color: #28a745;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ============================================================ */
+/* BOTONES DE ACCIÓN */
+/* ============================================================ */
+
+.pago-exitoso-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #610c27 0%, #8b1538 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(97, 12, 39, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(97, 12, 39, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: white;
+  color: #610c27;
+  border: 2px solid #610c27;
+}
+
+.btn-secondary:hover {
+  background: #610c27;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(97, 12, 39, 0.2);
+}
+
+.btn-secondary:active {
+  transform: translateY(-1px);
+}
+
+/* ============================================================ */
+/* FOOTER */
+/* ============================================================ */
+
+.pago-exitoso-footer {
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.pago-exitoso-footer p {
+  font-size: 14px;
+  color: #a0aec0;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================================ */
+/* 📱 RESPONSIVE */
+/* ============================================================ */
+
+@media (max-width: 768px) {
+  .pago-exitoso-container {
+    padding: 40px 24px;
+  }
+
+  .pago-exitoso-title {
+    font-size: 28px;
+  }
+
+  .pago-exitoso-mensaje {
+    font-size: 16px;
+  }
+
+  .success-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .success-icon {
+    font-size: 64px;
+  }
+
+  .celebration-icon {
+    font-size: 32px;
+  }
+
+  .pago-exitoso-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .transaction-id {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .next-steps-list li {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pago-exitoso-page {
+    padding: 20px 16px;
+  }
+
+  .pago-exitoso-container {
+    padding: 32px 20px;
+  }
+
+  .pago-exitoso-title {
+    font-size: 24px;
+  }
+
+  .success-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .success-icon {
+    font-size: 48px;
+  }
+
+  .transaction-info {
+    padding: 16px;
+  }
+
+  .next-steps {
+    padding: 16px;
+  }
+}

@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../../Styles/catalogo.css";
 import {
   MdShoppingCart,
   MdSearch,
@@ -25,6 +26,7 @@ import {
   MdClose,
   MdLogout,
   MdPerson,
+  MdReceipt,
 } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -35,7 +37,8 @@ import {
   type CategoriaPublica,
 } from "../../../services/catalogo";
 import { signOut } from "../../../services/auth";
-import "../../../Styles/catalogo.css";
+import { useCart } from "../../../context/CartContext";
+import toast, { Toaster } from "react-hot-toast";
 
 /**
  * Tipo de vista del catálogo
@@ -51,6 +54,8 @@ type Seccion = "todos" | "destacados" | "nuevos" | "mas-vendidos";
  * Página principal del catálogo público
  */
 export default function CatalogoPage() {
+  // Cart
+  const { add } = useCart();
   // ============================================================
   // 🔄 ESTADO
   // ============================================================
@@ -222,6 +227,25 @@ export default function CatalogoPage() {
    */
   const stats = CatalogoHelpers.obtenerEstadisticas(productos);
 
+  /**
+   * Agregar producto al carrito
+   */
+  const agregarAlCarrito = (producto: ProductoCatalogo) => {
+    add({
+      id: String(producto.idProducto),
+      name: producto.nombre,
+      price: producto.precio,
+      image: producto.imagen_url || "",
+      qty: 1,
+    });
+    // Mostrar notificación de éxito con toast
+    toast.success(`${producto.nombre} agregado al carrito`, {
+      duration: 3000,
+      position: "top-right",
+      icon: "🛒",
+    });
+  };
+
   // ============================================================
   // 🎨 RENDERIZADO
   // ============================================================
@@ -246,6 +270,20 @@ export default function CatalogoPage() {
 
             {/* Botones de usuario */}
             <div className="catalogo-user-actions">
+              <button
+                className="btn-user-action"
+                onClick={() => navigate("/ventas")}
+                title="Mis Compras"
+              >
+                <MdReceipt size={24} />
+              </button>
+              <button
+                className="btn-user-action"
+                onClick={() => navigate("/carrito")}
+                title="Mi Carrito"
+              >
+                <MdShoppingCart size={24} />
+              </button>
               <button className="btn-user-action" title="Perfil">
                 <MdPerson size={24} />
               </button>
@@ -479,15 +517,32 @@ export default function CatalogoPage() {
                     {/* Footer */}
                     <div className="producto-footer">
                       <span className="producto-precio">{precio}</span>
-                      <button
-                        className="btn-ver-detalle"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setProductoDetalle(producto);
-                        }}
-                      >
-                        Ver Detalles
-                      </button>
+                      <div className="producto-acciones">
+                        <button
+                          className="btn-agregar"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            agregarAlCarrito(producto);
+                          }}
+                          disabled={producto.stock === 0}
+                          title={
+                            producto.stock > 0
+                              ? "Agregar al carrito"
+                              : "Sin stock"
+                          }
+                        >
+                          <MdShoppingCart size={18} />
+                        </button>
+                        <button
+                          className="btn-ver-detalle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setProductoDetalle(producto);
+                          }}
+                        >
+                          Ver Detalles
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </article>
@@ -563,14 +618,25 @@ export default function CatalogoPage() {
               </div>
 
               {/* Botón de acción */}
-              <button className="btn-agregar-carrito">
+              <button
+                className="btn-agregar-carrito"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  agregarAlCarrito(productoDetalle);
+                  setProductoDetalle(null);
+                }}
+                disabled={productoDetalle.stock === 0}
+              >
                 <MdShoppingCart size={20} />
-                Agregar al Carrito
+                {productoDetalle.stock > 0 ? "Agregar al Carrito" : "Sin Stock"}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Toaster para notificaciones */}
+      <Toaster />
     </div>
   );
 }

@@ -1,0 +1,834 @@
+/* ============================================================ */
+/* 📦 ESTILOS DE VENTAS Y CUOTAS */
+/* ============================================================ */
+
+:root {
+  --wine: #610c27;
+  --wine-light: #8b1538;
+  --gold: #d4af37;
+  --text-dark: #2c3e50;
+  --text-secondary: #6c757d;
+  --bg-light: #f8f9fa;
+  --border-light: #e9ecef;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================ */
+/* PÁGINA PRINCIPAL */
+/* ============================================================ */
+
+.ventas-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ============================================================ */
+/* HEADER */
+/* ============================================================ */
+
+.ventas-header {
+  background: linear-gradient(135deg, var(--wine) 0%, var(--wine-light) 100%);
+  padding: 24px 0;
+  box-shadow: var(--shadow-md);
+}
+
+.ventas-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.ventas-title {
+  color: white;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ============================================================ */
+/* NAVEGACIÓN DE VISTAS */
+/* ============================================================ */
+
+.ventas-nav {
+  background: white;
+  box-shadow: var(--shadow-sm);
+  border-bottom: 2px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.ventas-nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  gap: 4px;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 32px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.nav-tab:hover {
+  color: var(--wine);
+  background: rgba(97, 12, 39, 0.05);
+}
+
+.nav-tab.active {
+  color: var(--wine);
+  border-bottom-color: var(--wine);
+}
+
+.nav-tab div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.nav-tab span {
+  font-size: 16px;
+}
+
+.nav-tab small {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ============================================================ */
+/* CONTENIDO */
+/* ============================================================ */
+
+.ventas-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+
+/* Estados vacíos y errores */
+.ventas-vacio,
+.ventas-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.ventas-vacio svg,
+.ventas-error svg {
+  color: var(--wine);
+  opacity: 0.2;
+  margin-bottom: 24px;
+}
+
+.ventas-vacio h3,
+.ventas-error h3 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 12px 0;
+}
+
+.ventas-vacio p,
+.ventas-error p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0 0 32px 0;
+}
+
+.btn-retry {
+  padding: 14px 32px;
+  background: var(--wine);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-retry:hover {
+  background: var(--wine-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================ */
+/* LISTA DE VENTAS */
+/* ============================================================ */
+
+.ventas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.venta-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.venta-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--wine);
+}
+
+/* Header de la venta */
+.venta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.venta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.venta-numero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.venta-numero svg {
+  color: var(--wine);
+}
+
+.venta-fecha {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.venta-estado .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger);
+}
+
+.badge-info {
+  background: rgba(23, 162, 184, 0.1);
+  color: var(--info);
+}
+
+/* Detalles de la venta */
+.venta-detalles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.detalle-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detalle-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detalle-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.detalle-value.interes {
+  color: var(--warning);
+}
+
+.detalle-item.total .detalle-value {
+  font-size: 24px;
+  color: var(--wine);
+}
+
+/* Método de pago */
+.venta-metodo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: rgba(97, 12, 39, 0.05);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wine);
+  margin-bottom: 20px;
+}
+
+/* Progreso de pago */
+.venta-progreso {
+  margin-bottom: 20px;
+}
+
+.progreso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.progreso-bar {
+  height: 12px;
+  background: var(--border-light);
+  border-radius: 25px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progreso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--wine) 0%, var(--gold) 100%);
+  border-radius: 25px;
+  transition: width 0.5s ease;
+}
+
+.progreso-info {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Botón expandir */
+.btn-expandir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: var(--bg-light);
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-expandir:hover {
+  background: rgba(97, 12, 39, 0.05);
+  border-color: var(--wine);
+  color: var(--wine);
+}
+
+/* Contenido expandido */
+.venta-expandida {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border-light);
+}
+
+.seccion-expandida {
+  margin-bottom: 28px;
+}
+
+.seccion-expandida:last-child {
+  margin-bottom: 0;
+}
+
+.seccion-expandida h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 16px 0;
+}
+
+/* Productos comprados */
+.productos-comprados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.producto-comprado {
+  display: grid;
+  grid-template-columns: 2fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-light);
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.producto-nombre {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.producto-cantidad,
+.producto-precio {
+  color: var(--text-secondary);
+}
+
+.producto-subtotal {
+  font-weight: 800;
+  color: var(--wine);
+  text-align: right;
+}
+
+/* Cuotas mini */
+.cuotas-lista-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cuota-mini {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: var(--bg-light);
+  border-radius: 12px;
+  border: 2px solid var(--border-light);
+}
+
+.cuota-mini.pagada {
+  background: rgba(40, 167, 69, 0.05);
+  border-color: rgba(40, 167, 69, 0.2);
+}
+
+.cuota-numero {
+  font-weight: 700;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.cuota-monto {
+  font-weight: 800;
+  color: var(--wine);
+  font-size: 16px;
+}
+
+.cuota-vencimiento {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.cuota-estado {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.btn-pagar-mini {
+  padding: 8px 20px;
+  background: var(--wine);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-pagar-mini:hover:not(:disabled) {
+  background: var(--wine-light);
+  transform: scale(1.05);
+}
+
+.btn-pagar-mini:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================ */
+/* CUOTAS */
+/* ============================================================ */
+
+/* Estadísticas */
+.cuotas-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.stat-card.warning {
+  border-color: rgba(255, 193, 7, 0.3);
+  background: rgba(255, 193, 7, 0.02);
+}
+
+.stat-card.success {
+  border-color: rgba(40, 167, 69, 0.3);
+  background: rgba(40, 167, 69, 0.02);
+}
+
+.stat-card.danger {
+  border-color: rgba(220, 53, 69, 0.3);
+  background: rgba(220, 53, 69, 0.02);
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 28px;
+  background: var(--bg-light);
+  color: var(--wine);
+}
+
+.stat-card.warning .stat-icon {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning);
+}
+
+.stat-card.success .stat-icon {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--success);
+}
+
+.stat-card.danger .stat-icon {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+/* Filtros de cuotas */
+.cuotas-filtros {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.filtro-btn {
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid var(--border-light);
+  border-radius: 25px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filtro-btn:hover {
+  border-color: var(--wine);
+  color: var(--wine);
+}
+
+.filtro-btn.active {
+  background: var(--wine);
+  border-color: var(--wine);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grid de cuotas */
+.cuotas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Card de cuota */
+.cuota-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cuota-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.cuota-card.pagada {
+  background: rgba(40, 167, 69, 0.02);
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+.cuota-card.vencida {
+  background: rgba(220, 53, 69, 0.02);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.cuota-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cuota-numero-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.cuota-monto-grande {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--wine);
+  padding: 20px;
+  background: rgba(97, 12, 39, 0.05);
+  border-radius: 16px;
+}
+
+.cuota-detalles-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cuota-detalle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-light);
+  border-radius: 12px;
+}
+
+.cuota-detalle-row svg {
+  color: var(--wine);
+  flex-shrink: 0;
+}
+
+.cuota-detalle-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cuota-detalle-row .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.cuota-detalle-row .value {
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.cuota-dias-restantes {
+  text-align: center;
+  padding: 10px;
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.btn-pagar-cuota {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--wine) 0%, var(--wine-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+  margin-top: auto;
+}
+
+.btn-pagar-cuota:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-pagar-cuota:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================ */
+/* RESPONSIVE */
+/* ============================================================ */
+
+@media (max-width: 992px) {
+  .ventas-header-content,
+  .ventas-nav-content,
+  .ventas-content {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .cuotas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ventas-title {
+    font-size: 24px;
+  }
+
+  .ventas-header-content,
+  .ventas-nav-content,
+  .ventas-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .nav-tab {
+    padding: 16px 20px;
+  }
+
+  .venta-card {
+    padding: 20px;
+  }
+
+  .venta-detalles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .producto-comprado {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cuota-mini {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .cuotas-estadisticas {
+    grid-template-columns: 1fr;
+  }
+
+  .cuotas-grid {
+    grid-template-columns: 1fr;
+  }
+}
